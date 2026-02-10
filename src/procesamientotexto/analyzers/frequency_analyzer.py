@@ -1,7 +1,5 @@
 from procesamientotexto.analyzers.base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
 
-class WordCounter(Analyzer):
-    """Counts the number of words in a document."""
-
+class FrequencyAnalyzer(Analyzer):
     pass

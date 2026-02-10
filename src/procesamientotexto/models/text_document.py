@@ -49,3 +49,15 @@ class TextDocument:
 
     def is_empty(self) -> bool:
         return not self.content.strip()
+
+
+@dataclass
+class ExtractionResult():
+    """
+    Model for data extracted, merging emails, url and dates ocurrences in the same class
+    """
+
+    email_matches: list[str] = field(default_factory=list)
+    url_matches: list[str] = field(default_factory=list)
+    date_matches: list[str] = field(default_factory=list)
+

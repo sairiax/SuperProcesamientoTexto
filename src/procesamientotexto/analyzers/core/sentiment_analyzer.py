@@ -1,4 +1,3 @@
-import re
 from typing import Any, Dict
 from procesamientotexto.analyzers.core.base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
@@ -65,8 +64,7 @@ class SentimentAnalyzer(Analyzer):
                 - 'pos_count': Number of positive words found.
                 - 'neg_count': Number of negative words found.
         """
-        text = document.content.lower()
-        words = re.findall(r"\w+", text)
+        words = document.tokens
 
         if not words:
             result = {

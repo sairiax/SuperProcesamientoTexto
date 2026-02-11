@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import List, Optional
+import re
 
 
 @dataclass()
@@ -15,7 +17,6 @@ class TextDocument:
         Original file path.
     metadata : dict
         Reader- or transformer-provided metadata (format, structure hints, etc.).
-        This should not contain analysis results.
     analysis_results : dict
         Results produced by analyzers, keyed by analyzer identifier.
 
@@ -38,6 +39,16 @@ class TextDocument:
     source_path: Path | None = None
     metadata: dict = field(default_factory=dict)
     analysis_results: dict = field(default_factory=dict)
+    _tokens: Optional[List[str]] = field(default=None, init=False)
+
+    @property
+    def tokens(self) -> List[str]:
+        """Lazy loads and returns the list of tokens (words)."""
+        if self._tokens is None:
+            # Simple tokenization: word characters only, lowercase
+            # TODO: Integrate with a more robust tokenizer of package transformers/
+            self._tokens = re.findall(r"\w+", self.content.lower())
+        return self._tokens
 
     def add_analysis(self, key: str, result) -> None:
         self.analysis_results[key] = result

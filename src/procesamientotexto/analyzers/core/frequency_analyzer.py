@@ -1,5 +1,5 @@
 from collections import Counter
-import re
+
 from typing import Any
 
 from .base import Analyzer
@@ -14,9 +14,6 @@ class FrequencyAnalyzer(Analyzer):
     and determines the most common token length.
     """
 
-    # TODO: Cambiar tokenización por la de mi compa
-    TOKEN_REGEX = re.compile(r"\w+")
-
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
         Analyzes the document to extract frequency statistics.
@@ -28,12 +25,10 @@ class FrequencyAnalyzer(Analyzer):
             dict[str, Any]: A dictionary containing:
                 - 'total_words': Total count of tokens.
                 - 'top_words': Dictionary of top 10 most common words.
+                - 'word_counts': Dictionary of Word:Occurrences.
                 - 'most_common_length': The most frequent token length.
         """
-        text = (
-            document.content.lower()
-        )  # TODO: Cambiar por la normalización de mi compa?
-        tokens = self._tokenize(text)  # TODO: Cambiar tokenización por la de mi compa
+        tokens = document.tokens
 
         if not tokens:
             result = self._empty_result()
@@ -54,11 +49,6 @@ class FrequencyAnalyzer(Analyzer):
 
         document.add_analysis("frequency_analyzer", result)
         return result
-
-    @classmethod
-    def _tokenize(cls, text: str) -> list[str]:
-        """Technically this should be a shared utility."""
-        return cls.TOKEN_REGEX.findall(text)
 
     @staticmethod
     def _empty_result() -> dict[str, Any]:

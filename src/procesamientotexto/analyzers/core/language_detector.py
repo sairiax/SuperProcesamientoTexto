@@ -1,4 +1,3 @@
-import re
 from typing import Any, Dict
 from .base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
@@ -130,8 +129,8 @@ class LanguageDetector(Analyzer):
                 - 'confidence': Confidence score between 0.0 and 1.0.
         """
         # TODO: Cambiar esto por tokenizer + normalizer?
-        text = document.content.lower()
-        words = set(re.findall(r"\w+", text))
+        # Note: document.tokens already provides lowercased tokens via standard tokenization
+        words = set(document.tokens)
 
         if not words:
             result = {"language": "unknown", "confidence": 0.0}

@@ -29,7 +29,7 @@ class ReadabilityAnalyzer(Analyzer):
         sentences = re.split(r"[.!?]+", text)
         sentences = [s for s in sentences if s.strip()]
 
-        words = re.findall(r"\w+", text)
+        words = document.tokens
 
         if not words or not sentences:
             result = {

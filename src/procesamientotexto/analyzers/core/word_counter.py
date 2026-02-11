@@ -7,6 +7,7 @@ class WordCounter(Analyzer):
     """Counts the number of words in a document and their frequencies."""
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
+        # TODO: Usar normalizer.py y cleaner.py
         text = document.content.lower()
 
         # TODO: Usar el tokenizer de transformers

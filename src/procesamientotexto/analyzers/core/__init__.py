@@ -1,4 +1,3 @@
-from .base import Analyzer
 from .word_counter import WordCounter
 from .frequency_analyzer import FrequencyAnalyzer
 from .language_detector import LanguageDetector

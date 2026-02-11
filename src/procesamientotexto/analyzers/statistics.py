@@ -1,5 +1,5 @@
+from procesamientotexto.analyzers.core.base import Analyzer
 from procesamientotexto.analyzers.core import (
-    Analyzer,
     WordCounter,
     FrequencyAnalyzer,
     LanguageDetector,

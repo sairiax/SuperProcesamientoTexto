@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 from procesamientotexto.models.text_document import TextDocument
+
 
 class Analyzer(ABC):
     """Base class for all analyzers."""

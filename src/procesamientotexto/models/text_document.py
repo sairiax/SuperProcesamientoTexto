@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
-@dataclass(slots=True)  # Genera el __slots__ para optimizar memoria + __init__ automaticamente
+
+@dataclass()
 class TextDocument:
     """
     Represents a document with its content, associated metadata and analysis results.
@@ -52,7 +53,7 @@ class TextDocument:
 
 
 @dataclass
-class ExtractionResult():
+class ExtractionResult:
     """
     Model for data extracted, merging emails, url and dates ocurrences in the same class
     """
@@ -60,4 +61,3 @@ class ExtractionResult():
     email_matches: list[str] = field(default_factory=list)
     url_matches: list[str] = field(default_factory=list)
     date_matches: list[str] = field(default_factory=list)
-

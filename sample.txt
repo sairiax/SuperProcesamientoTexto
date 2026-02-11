@@ -1,0 +1,4 @@
+Hola mundo. Esto es una prueba de concepto para el sistema de análisis de texto.
+Esperamos que funcione correctamente y detecte el idioma español.
+También debería contar las palabras y analizar la legibilidad.
+Es un día maravilloso para programar.

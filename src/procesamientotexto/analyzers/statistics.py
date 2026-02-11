@@ -1,23 +1,22 @@
 from procesamientotexto.analyzers.core.base import Analyzer
 from procesamientotexto.analyzers.core import (
-    WordCounter,
     FrequencyAnalyzer,
     LanguageDetector,
     SentimentAnalyzer,
-    ReadabilityAnalyzer
+    ReadabilityAnalyzer,
 )
 from procesamientotexto.models.text_document import TextDocument
+
 
 class Statistics(Analyzer):
     """Calculates document statistics by orchestrating other analyzers."""
 
     def __init__(self):
         self.analyzers = [
-            WordCounter(),
             FrequencyAnalyzer(),
             LanguageDetector(),
             SentimentAnalyzer(),
-            ReadabilityAnalyzer()
+            ReadabilityAnalyzer(),
         ]
 
     def analyze(self, document: TextDocument) -> dict:
@@ -25,19 +24,23 @@ class Statistics(Analyzer):
         summary = {}
         for analyzer in self.analyzers:
             result = analyzer.analyze(document)
-            # Use the class name lowercase (minus 'analyzer') as the key if possible
-            # but for now we follow the internal add_analysis keys
-            pass # The results are already added to document.analysis_results by the analyzers themselves
-            
+            pass
+
+        freq_results = document.get_analysis("frequency_analyzer")
+
         summary = {
-            "word_stats": document.get_analysis("word_counter"),
-            "frequencies": document.get_analysis("frequency_analyzer"),
+            "word_stats": {
+                "total_words": freq_results.get("total_words", 0) if freq_results else 0
+            },
+            "frequencies": freq_results,
             "language": document.get_analysis("language_detector"),
             "sentiment": document.get_analysis("sentiment_analyzer"),
             "readability": document.get_analysis("readability_analyzer"),
             "total_chars": len(document.content),
-            "total_chars_no_spaces": len(document.content.replace(" ", "").replace("\n", ""))
+            "total_chars_no_spaces": len(
+                document.content.replace(" ", "").replace("\n", "")
+            ),
         }
-        
+
         document.add_analysis("statistics", summary)
         return summary

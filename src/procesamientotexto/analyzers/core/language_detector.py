@@ -1,12 +1,18 @@
 import re
+from typing import Any, Dict
 from .base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
 
 
 class LanguageDetector(Analyzer):
-    """Detects text language based on common stopword overlap."""
+    """
+    Analyzer that detects the language of a document.
 
-    STOPWORDS = {
+    Uses a stopword overlap heuristic to identify the most likely language
+    from a set of supported languages (es, en, fr, de, it, pt).
+    """
+
+    STOPWORDS: Dict[str, set[str]] = {
         "es": {
             "el",
             "la",
@@ -111,8 +117,18 @@ class LanguageDetector(Analyzer):
         },
     }
 
-    def analyze(self, document: TextDocument) -> dict:
+    def analyze(self, document: TextDocument) -> Dict[str, Any]:
+        """
+        Detects the language of the document.
 
+        Args:
+           document (TextDocument): The document to analyze.
+
+        Returns:
+            Dict[str, Any]: A dictionary containing:
+                - 'language': Detected language code (e.g., 'en', 'es') or 'unknown'.
+                - 'confidence': Confidence score between 0.0 and 1.0.
+        """
         # TODO: Cambiar esto por tokenizer + normalizer?
         text = document.content.lower()
         words = set(re.findall(r"\w+", text))

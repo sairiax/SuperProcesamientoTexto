@@ -7,18 +7,29 @@ from procesamientotexto.models.text_document import TextDocument
 
 
 class FrequencyAnalyzer(Analyzer):
-    """Analyzes word frequencies.
+    """
+    Analyzer that calculates word frequencies and token statistics.
 
-    Provides:
-    - top_n words
-    - total word count
-    - most common token length
+    This analyzer counts the occurrences of each word, the total number of words,
+    and determines the most common token length.
     """
 
     # TODO: Cambiar tokenización por la de mi compa
     TOKEN_REGEX = re.compile(r"\w+")
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
+        """
+        Analyzes the document to extract frequency statistics.
+
+        Args:
+            document (TextDocument): The document to analyze.
+
+        Returns:
+            dict[str, Any]: A dictionary containing:
+                - 'total_words': Total count of tokens.
+                - 'top_words': Dictionary of top 10 most common words.
+                - 'most_common_length': The most frequent token length.
+        """
         text = (
             document.content.lower()
         )  # TODO: Cambiar por la normalización de mi compa?
@@ -32,10 +43,13 @@ class FrequencyAnalyzer(Analyzer):
         word_counts = Counter(tokens)
         length_counts = Counter(map(len, tokens))
 
+        most_common_len_data = length_counts.most_common(1)
+        most_common_len = most_common_len_data[0][0] if most_common_len_data else 0
+
         result = {
             "total_words": len(tokens),
             "top_words": dict(word_counts.most_common(10)),
-            "most_common_length": length_counts.most_common(1)[0][0],
+            "most_common_length": most_common_len,
         }
 
         document.add_analysis("frequency_analyzer", result)
@@ -43,6 +57,7 @@ class FrequencyAnalyzer(Analyzer):
 
     @classmethod
     def _tokenize(cls, text: str) -> list[str]:
+        """Technically this should be a shared utility."""
         return cls.TOKEN_REGEX.findall(text)
 
     @staticmethod

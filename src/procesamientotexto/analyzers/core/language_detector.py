@@ -116,7 +116,7 @@ class LanguageDetector(Analyzer):
         },
     }
 
-    def analyze(self, document: TextDocument) -> Dict[str, Any]:
+    def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
         Detects the language of the document.
 
@@ -128,13 +128,11 @@ class LanguageDetector(Analyzer):
                 - 'language': Detected language code (e.g., 'en', 'es') or 'unknown'.
                 - 'confidence': Confidence score between 0.0 and 1.0.
         """
-        # TODO: Cambiar esto por tokenizer + normalizer?
         # Note: document.tokens already provides lowercased tokens via standard tokenization
         words = set(document.tokens)
 
         if not words:
             result = {"language": "unknown", "confidence": 0.0}
-            document.add_analysis("language_detector", result)
             return result
 
         scores = {}
@@ -150,5 +148,4 @@ class LanguageDetector(Analyzer):
             best_lang = "unknown"
 
         result = {"language": best_lang, "confidence": round(confidence, 2)}
-        document.add_analysis("language_detector", result)
         return result

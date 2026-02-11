@@ -10,6 +10,5 @@ class Analyzer(ABC):
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
         Analyzes the document and returns the result.
-        The result should also be stored in the document's analysis_results.
         """
         pass

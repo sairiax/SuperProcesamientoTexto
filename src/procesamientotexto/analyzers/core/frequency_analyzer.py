@@ -31,29 +31,35 @@ class FrequencyAnalyzer(Analyzer):
         tokens = document.tokens
 
         if not tokens:
-            result = self._empty_result()
-            document.add_analysis("frequency_analyzer", result)
-            return result
+            # TODO: log.warning -> Zero tokens to analyze
+            return self._empty_result()
 
+        # TODO: log.info -> starting frequency analysis
         word_counts = Counter(tokens)
         length_counts = Counter(map(len, tokens))
 
         most_common_len_data = length_counts.most_common(1)
         most_common_len = most_common_len_data[0][0] if most_common_len_data else 0
+        # TODO: log.info -> ends frequency analysis
 
         result = {
             "total_words": len(tokens),
             "top_words": dict(word_counts.most_common(10)),
+            "word_counts": dict(word_counts),
             "most_common_length": most_common_len,
         }
 
-        document.add_analysis("frequency_analyzer", result)
         return result
 
     @staticmethod
     def _empty_result() -> dict[str, Any]:
+        """Generates a valid result for an empty document.
+
+        All fields are set to default values.
+        """
         return {
             "total_words": 0,
             "top_words": {},
+            "word_counts": {},
             "most_common_length": 0,
         }

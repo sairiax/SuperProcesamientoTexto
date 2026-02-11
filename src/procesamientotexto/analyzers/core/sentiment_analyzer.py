@@ -11,6 +11,7 @@ class SentimentAnalyzer(Analyzer):
     the presence of predefined keywords.
     """
 
+    # TODO: Add support for more languages
     POS_WORDS = {
         "good",
         "great",
@@ -65,32 +66,19 @@ class SentimentAnalyzer(Analyzer):
                 - 'neg_count': Number of negative words found.
         """
         words = document.tokens
-
         if not words:
-            result = {
-                "sentiment": "neutral",
-                "score": 0.0,
-                "pos_count": 0,
-                "neg_count": 0,
-            }
-            document.add_analysis("sentiment_analyzer", result)
-            return result
+            return self._empty_result()
 
         pos_count = sum(1 for w in words if w in self.POS_WORDS)
         neg_count = sum(1 for w in words if w in self.NEG_WORDS)
-
         total_sentiment_words = pos_count + neg_count
-        if total_sentiment_words == 0:
-            score = 0.0
-            sentiment = "neutral"
-        else:
-            score = (pos_count - neg_count) / total_sentiment_words
-            if score > 0.1:
-                sentiment = "positive"
-            elif score < -0.1:
-                sentiment = "negative"
-            else:
-                sentiment = "neutral"
+
+        score = (
+            (pos_count - neg_count) / total_sentiment_words
+            if total_sentiment_words > 0
+            else 0.0
+        )
+        sentiment = self._get_label(score)
 
         result = {
             "sentiment": sentiment,
@@ -98,5 +86,25 @@ class SentimentAnalyzer(Analyzer):
             "pos_count": pos_count,
             "neg_count": neg_count,
         }
-        document.add_analysis("sentiment_analyzer", result)
         return result
+
+    def _get_label(score: float) -> str:
+        if score > 0.1:
+            return "positive"
+        elif score < -0.1:
+            return "negative"
+        else:
+            return "neutral"
+
+    @staticmethod
+    def _empty_result() -> dict[str, Any]:
+        """Generates a valid result for a text with no words.
+
+        All values are set to default.
+        """
+        return {
+            "sentiment": "neutral",
+            "score": 0.0,
+            "pos_count": 0,
+            "neg_count": 0,
+        }

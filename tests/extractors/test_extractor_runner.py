@@ -10,12 +10,12 @@ from text_toolkit.models.text_document import TextDocument, ExtractionResult
 
 @pytest.fixture
 def extractor_runner():
-    """Fixture que proporciona una instancia de ExtractorRunner."""
+    """Fixture that provides an ExtractorRunner instance."""
     return ExtractorRunner()
 
 
 def test_extractorengine_initialization(extractor_runner):
-    """Debe inicializar el engine con todos los extractores disponibles."""
+    """Should initialize the engine with all available extractors."""
     assert hasattr(extractor_runner, 'email_extractor'), "Should have email_extractor"
     assert hasattr(extractor_runner, 'url_extractor'), "Should have url_extractor"
     assert hasattr(extractor_runner, 'date_extractor'), "Should have date_extractor"
@@ -24,7 +24,7 @@ def test_extractorengine_initialization(extractor_runner):
     assert isinstance(extractor_runner.date_extractor, DateExtractor), "date_extractor should be DateExtractor instance"
 
 def test_extractorengine_extract_all_method(extractor_runner):
-    """Debe extraer emails, URLs y fechas simultáneamente."""
+    """Should extract emails, URLs and dates simultaneously."""
     document = TextDocument(content="Contact: admin@example.com, visit https://example.com on 2026-03-15")
     result = extractor_runner.extract_all(document)
 
@@ -34,7 +34,7 @@ def test_extractorengine_extract_all_method(extractor_runner):
     assert len(result.date_matches) == 1, "Should extract 1 date"
 
 def test_extractorengine_extract_all_returns_extraction_result(extractor_runner):
-    """Debe retornar un objeto ExtractionResult con todos los matches."""
+    """Should return an ExtractionResult object with all matches."""
     document = TextDocument(content="Email: test@example.com, URL: http://test.com, Date: 2026-01-01")
     result = extractor_runner.extract_all(document)
 
@@ -47,7 +47,7 @@ def test_extractorengine_extract_all_returns_extraction_result(extractor_runner)
     assert "2026-01-01" in result.date_matches, "Should extract 2026-01-01"
 
 def test_extractorengine_extract_all_with_unique_occurrences(extractor_runner):
-    """Debe eliminar duplicados cuando unique_occurrences=True."""
+    """Should remove duplicates when unique_occurrences=True."""
     document = TextDocument(
         content="Emails: admin@test.com, admin@test.com, URLs: https://test.com, https://test.com, Dates: 2026-01-15, 2026-01-15"
     )
@@ -59,7 +59,7 @@ def test_extractorengine_extract_all_with_unique_occurrences(extractor_runner):
     assert len(result.date_matches) == 1, "Should return 1 unique date"
 
 def test_extractorengine_extract_all_with_duplicates(extractor_runner):
-    """Debe incluir duplicados cuando unique_occurrences=False."""
+    """Should include duplicates when unique_occurrences=False."""
     document = TextDocument(
         content="Emails: admin@test.com, admin@test.com, URLs: https://test.com, https://test.com, Dates: 2026-01-15, 2026-01-15"
     )
@@ -71,7 +71,7 @@ def test_extractorengine_extract_all_with_duplicates(extractor_runner):
     assert len(result.date_matches) == 2, "Should return 2 date occurrences (including duplicates)"
 
 def test_extractorengine_extract_from_empty_document(extractor_runner):
-    """Debe manejar documentos vacíos sin errores."""
+    """Should handle empty documents without errors."""
     document = TextDocument(content="")
     result = extractor_runner.extract_all(document)
 
@@ -84,7 +84,7 @@ def test_extractorengine_extract_from_empty_document(extractor_runner):
     assert result.date_matches == [], "Date matches should be empty list"
 
 def test_extractorengine_extract_from_document_with_no_matches(extractor_runner):
-    """Debe retornar listas vacías cuando no hay coincidencias."""
+    """Should return empty lists when there are no matches."""
     document = TextDocument(content="Este es un texto simple sin datos extraíbles")
     result = extractor_runner.extract_all(document)
 
@@ -97,7 +97,7 @@ def test_extractorengine_extract_from_document_with_no_matches(extractor_runner)
     assert result.date_matches == [], "Date matches should be empty list"
 
 def test_extractorengine_extraction_result_structure(extractor_runner):
-    """Debe verificar que ExtractionResult contenga los campos esperados."""
+    """Should verify that ExtractionResult contains the expected fields."""
     document = TextDocument(content="Test content: user@example.com, https://example.com, 2026-02-15")
     result = extractor_runner.extract_all(document)
 

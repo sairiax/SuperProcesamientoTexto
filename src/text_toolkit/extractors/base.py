@@ -1,6 +1,9 @@
+import logging
 import re
 from re import Pattern
 from typing import Protocol, runtime_checkable
+
+logger = logging.getLogger(__name__)
 
 
 @runtime_checkable
@@ -46,7 +49,9 @@ class RegexExtractor:
             try:
                 compiled_pattern = re.compile(pattern)
                 self._regex_pattern_list.append(compiled_pattern)
+                logger.debug("Added pattern: %s", pattern)
             except re.error as exc:
+                logger.error("Invalid regex pattern: %s", pattern)
                 raise ValueError(f"Invalid regex pattern: {pattern}") from exc
 
     def extract(self, text: str, unique_occurrences: bool = False) -> list[str]:
@@ -65,11 +70,21 @@ class RegexExtractor:
         list[str]
             List of matched strings
         """
+        if not text:
+            logger.warning("Empty text provided for extraction")
+            return []
+
+        logger.debug("Starting extraction on text of length %d with %d patterns", len(text), len(self._regex_pattern_list))
         results = []
         for pattern in self._regex_pattern_list:
-            results.extend(pattern.findall(text))
+            matches = pattern.findall(text)
+            if matches:
+                logger.debug("Pattern '%s' found %d matches", pattern.pattern, len(matches))
+            results.extend(matches)
 
         if unique_occurrences:
-            return list(dict.fromkeys(results))
+            results = list(dict.fromkeys(results))
+            logger.debug("Removed duplicates, %d unique matches remain", len(results))
 
+        logger.info("Extraction completed: found %d matches (unique_occurrences=%s)", len(results), unique_occurrences)
         return results

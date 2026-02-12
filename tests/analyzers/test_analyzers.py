@@ -11,23 +11,23 @@ from procesamientotexto.models.text_document import TextDocument
 
 
 @pytest.fixture
-def english_doc():
+def english_doc() -> TextDocument:
     return TextDocument(content="This is a great day. I love English! It is excellent.")
 
 
 @pytest.fixture
-def spanish_doc():
+def spanish_doc() -> TextDocument:
     return TextDocument(content="Este es un día excelente. Me encanta el español! Es maravilloso.")
 
 
-def test_frequency_analyzer(english_doc):
+def test_frequency_analyzer(english_doc: TextDocument):
     analyzer = FrequencyAnalyzer()
     result = analyzer.analyze(english_doc)
     assert "top_words" in result
     assert result["most_common_length"] > 0
 
 
-def test_language_detector(english_doc, spanish_doc):
+def test_language_detector(english_doc: TextDocument, spanish_doc: TextDocument):
     analyzer = LanguageDetector()
     en_result = analyzer.analyze(english_doc)
     es_result = analyzer.analyze(spanish_doc)
@@ -35,21 +35,21 @@ def test_language_detector(english_doc, spanish_doc):
     assert es_result["language"] == "es"
 
 
-def test_sentiment_analyzer(english_doc):
+def test_sentiment_analyzer(english_doc: TextDocument):
     analyzer = SentimentAnalyzer()
     result = analyzer.analyze(english_doc)
     assert result["sentiment"] == "positive"
     assert result["score"] > 0
 
 
-def test_readability_analyzer(english_doc):
+def test_readability_analyzer(english_doc: TextDocument):
     analyzer = ReadabilityAnalyzer()
     result = analyzer.analyze(english_doc)
     assert result["avg_sentence_length"] > 0
     assert result["avg_word_length"] > 0
 
 
-def test_analyzer_runner_orchestrator(english_doc):
+def test_analyzer_runner_orchestrator(english_doc: TextDocument):
     """Test that AnalyzerRunner orchestrates all analyzers with flat structure."""
     orchestrator = AnalyzerRunner()
     result = orchestrator.analyze(english_doc)

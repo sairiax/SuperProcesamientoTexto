@@ -7,7 +7,7 @@ from procesamientotexto.models.text_document import TextDocument
 class TestReadabilityAnalyzer:
     """Test suite for ReadabilityAnalyzer."""
 
-    def test_normal_document(self, english_doc):
+    def test_normal_document(self, english_doc: TextDocument):
         """Test readability analysis on a normal document."""
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(english_doc)
@@ -19,7 +19,7 @@ class TestReadabilityAnalyzer:
         assert result["avg_word_length"] > 0
         assert result["complexity"] in ["low", "medium", "high"]
 
-    def test_empty_document(self, empty_doc):
+    def test_empty_document(self, empty_doc: TextDocument):
         """Test readability analysis on empty document."""
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(empty_doc)
@@ -78,9 +78,7 @@ class TestReadabilityAnalyzer:
     def test_english_thresholds(self):
         """Test that English language thresholds are used."""
         # Create an English document that is clearly detected as English
-        doc = TextDocument(
-            content="The quick brown fox jumps over the lazy dog every day."
-        )
+        doc = TextDocument(content="The quick brown fox jumps over the lazy dog every day.")
         analyzer = ReadabilityAnalyzer()
 
         # First, we need language detection to set the language
@@ -132,7 +130,7 @@ class TestReadabilityAnalyzer:
         # Should be (3 + 3 + 4) / 3 = 3.33
         assert abs(result["avg_word_length"] - 3.33) < 0.01
 
-    def test_mixed_document(self, mixed_doc):
+    def test_mixed_document(self, mixed_doc: TextDocument):
         """Test readability on a complex mixed document."""
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(mixed_doc)

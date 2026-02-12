@@ -1,12 +1,13 @@
 """Tests for AnalyzerRunner."""
 
 from procesamientotexto.analyzers.analyzer_runner import AnalyzerRunner
+from procesamientotexto.models.text_document import TextDocument
 
 
 class TestAnalyzerRunner:
     """Test suite for AnalyzerRunner."""
 
-    def test_all_analyzers_executed(self, english_doc):
+    def test_all_analyzers_executed(self, english_doc: TextDocument):
         """Test that all analyzers are executed and results are present."""
         runner = AnalyzerRunner()
         result = runner.analyze(english_doc)
@@ -32,7 +33,7 @@ class TestAnalyzerRunner:
         assert "avg_word_length" in result
         assert "complexity" in result
 
-    def test_flat_structure(self, english_doc):
+    def test_flat_structure(self, english_doc: TextDocument):
         """Test that results are returned in a flat dictionary structure."""
         runner = AnalyzerRunner()
         result = runner.analyze(english_doc)
@@ -47,7 +48,7 @@ class TestAnalyzerRunner:
         assert "frequency" not in result
         assert "language_detector" not in result
 
-    def test_empty_document(self, empty_doc):
+    def test_empty_document(self, empty_doc: TextDocument):
         """Test that all analyzers handle empty documents gracefully."""
         runner = AnalyzerRunner()
         result = runner.analyze(empty_doc)
@@ -69,7 +70,7 @@ class TestAnalyzerRunner:
         assert result["avg_word_length"] == 0.0
         assert result["complexity"] == "unknown"
 
-    def test_positive_sentiment_document(self, english_doc):
+    def test_positive_sentiment_document(self, english_doc: TextDocument):
         """Test runner with a positive sentiment document."""
         runner = AnalyzerRunner()
         result = runner.analyze(english_doc)
@@ -79,7 +80,7 @@ class TestAnalyzerRunner:
         assert result["language"] == "en"
         assert result["total_words"] > 0
 
-    def test_negative_sentiment_document(self, negative_sentiment_doc):
+    def test_negative_sentiment_document(self, negative_sentiment_doc: TextDocument):
         """Test runner with a negative sentiment document."""
         runner = AnalyzerRunner()
         result = runner.analyze(negative_sentiment_doc)
@@ -88,7 +89,7 @@ class TestAnalyzerRunner:
         assert result["score"] < 0
         assert result["neg_count"] > 0
 
-    def test_spanish_document(self, spanish_doc):
+    def test_spanish_document(self, spanish_doc: TextDocument):
         """Test runner with a Spanish document."""
         runner = AnalyzerRunner()
         result = runner.analyze(spanish_doc)
@@ -97,7 +98,7 @@ class TestAnalyzerRunner:
         assert result["sentiment"] == "positive"
         assert result["total_words"] > 0
 
-    def test_consistency_across_analyzers(self, english_doc):
+    def test_consistency_across_analyzers(self, english_doc: TextDocument):
         """Test that analyzers produce consistent results."""
         runner = AnalyzerRunner()
         result = runner.analyze(english_doc)
@@ -112,7 +113,7 @@ class TestAnalyzerRunner:
         # Sentiment should be one of the valid values
         assert result["sentiment"] in ["positive", "negative", "neutral"]
 
-    def test_multiple_runs_same_document(self, english_doc):
+    def test_multiple_runs_same_document(self, english_doc: TextDocument):
         """Test that running the same document multiple times gives consistent results."""
         runner = AnalyzerRunner()
         result1 = runner.analyze(english_doc)
@@ -125,7 +126,7 @@ class TestAnalyzerRunner:
         assert result1["score"] == result2["score"]
         assert result1["complexity"] == result2["complexity"]
 
-    def test_different_documents(self, english_doc, spanish_doc):
+    def test_different_documents(self, english_doc: TextDocument, spanish_doc: TextDocument):
         """Test that different documents produce different results."""
         runner = AnalyzerRunner()
         en_result = runner.analyze(english_doc)
@@ -134,7 +135,7 @@ class TestAnalyzerRunner:
         # Languages should be different
         assert en_result["language"] != es_result["language"]
 
-    def test_result_types(self, english_doc):
+    def test_result_types(self, english_doc: TextDocument):
         """Test that all result values have the correct types."""
         runner = AnalyzerRunner()
         result = runner.analyze(english_doc)

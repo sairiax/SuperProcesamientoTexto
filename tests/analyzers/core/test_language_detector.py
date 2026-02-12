@@ -7,7 +7,7 @@ from procesamientotexto.models.text_document import TextDocument
 class TestLanguageDetector:
     """Test suite for LanguageDetector."""
 
-    def test_english_detection(self, english_doc):
+    def test_english_detection(self, english_doc: TextDocument):
         """Test that English text is correctly identified."""
         analyzer = LanguageDetector()
         result = analyzer.analyze(english_doc)
@@ -16,7 +16,7 @@ class TestLanguageDetector:
         assert result["confidence"] > 0
         assert isinstance(result["confidence"], float)
 
-    def test_spanish_detection(self, spanish_doc):
+    def test_spanish_detection(self, spanish_doc: TextDocument):
         """Test that Spanish text is correctly identified."""
         analyzer = LanguageDetector()
         result = analyzer.analyze(spanish_doc)
@@ -26,9 +26,7 @@ class TestLanguageDetector:
 
     def test_french_detection(self):
         """Test that French text is correctly identified."""
-        doc = TextDocument(
-            content="Bonjour! Je suis un étudiant. C'est la vie en France."
-        )
+        doc = TextDocument(content="Bonjour! Je suis un étudiant. C'est la vie en France.")
         analyzer = LanguageDetector()
         result = analyzer.analyze(doc)
 
@@ -39,9 +37,7 @@ class TestLanguageDetector:
 
     def test_german_detection(self):
         """Test that German text is correctly identified."""
-        doc = TextDocument(
-            content="Guten Tag! Das ist ein deutscher Text mit vielen Wörtern."
-        )
+        doc = TextDocument(content="Guten Tag! Das ist ein deutscher Text mit vielen Wörtern.")
         analyzer = LanguageDetector()
         result = analyzer.analyze(doc)
 
@@ -59,16 +55,14 @@ class TestLanguageDetector:
 
     def test_portuguese_detection(self):
         """Test that Portuguese text is correctly identified."""
-        doc = TextDocument(
-            content="Olá! Este é um texto em português com muitas palavras."
-        )
+        doc = TextDocument(content="Olá! Este é um texto em português com muitas palavras.")
         analyzer = LanguageDetector()
         result = analyzer.analyze(doc)
 
         assert result["language"] == "pt"
         assert result["confidence"] > 0
 
-    def test_empty_document(self, empty_doc):
+    def test_empty_document(self, empty_doc: TextDocument):
         """Test that empty documents return 'unknown' language."""
         analyzer = LanguageDetector()
         result = analyzer.analyze(empty_doc)
@@ -76,7 +70,7 @@ class TestLanguageDetector:
         assert result["language"] == "unknown"
         assert result["confidence"] == 0.0
 
-    def test_unsupported_language(self, chinese_doc):
+    def test_unsupported_language(self, chinese_doc: TextDocument):
         """Test handling of unsupported languages (Chinese)."""
         analyzer = LanguageDetector()
         result = analyzer.analyze(chinese_doc)
@@ -87,7 +81,7 @@ class TestLanguageDetector:
         assert "language" in result
         assert "confidence" in result
 
-    def test_confidence_range(self, english_doc):
+    def test_confidence_range(self, english_doc: TextDocument):
         """Test that confidence is between 0.0 and 1.0."""
         analyzer = LanguageDetector()
         result = analyzer.analyze(english_doc)
@@ -116,9 +110,7 @@ class TestLanguageDetector:
 
     def test_mixed_language_english_dominant(self):
         """Test mixed language text with English being dominant."""
-        doc = TextDocument(
-            content="The quick brown fox jumps. Also, hola amigo y la casa."
-        )
+        doc = TextDocument(content="The quick brown fox jumps. Also, hola amigo y la casa.")
         analyzer = LanguageDetector()
         result = analyzer.analyze(doc)
 

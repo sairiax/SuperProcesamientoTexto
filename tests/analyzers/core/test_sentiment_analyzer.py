@@ -7,7 +7,7 @@ from procesamientotexto.models.text_document import TextDocument
 class TestSentimentAnalyzer:
     """Test suite for SentimentAnalyzer."""
 
-    def test_positive_sentiment_english(self, english_doc):
+    def test_positive_sentiment_english(self, english_doc: TextDocument):
         """Test positive sentiment detection in English."""
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(english_doc)
@@ -17,7 +17,7 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] > 0
         assert result["neg_count"] == 0
 
-    def test_negative_sentiment(self, negative_sentiment_doc):
+    def test_negative_sentiment(self, negative_sentiment_doc: TextDocument):
         """Test negative sentiment detection."""
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(negative_sentiment_doc)
@@ -27,7 +27,7 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 0
         assert result["neg_count"] > 0
 
-    def test_neutral_sentiment(self, neutral_sentiment_doc):
+    def test_neutral_sentiment(self, neutral_sentiment_doc: TextDocument):
         """Test neutral sentiment detection."""
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(neutral_sentiment_doc)
@@ -37,7 +37,7 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 0
         assert result["neg_count"] == 0
 
-    def test_empty_document(self, empty_doc):
+    def test_empty_document(self, empty_doc: TextDocument):
         """Test sentiment analysis on empty document."""
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(empty_doc)

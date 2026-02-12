@@ -6,19 +6,19 @@ from procesamientotexto.models.text_document import TextDocument
 
 
 @pytest.fixture
-def empty_doc():
+def empty_doc() -> TextDocument:
     """Empty document for edge case testing."""
     return TextDocument(content="")
 
 
 @pytest.fixture
-def english_doc():
+def english_doc() -> TextDocument:
     """English text with positive sentiment."""
     return TextDocument(content="This is a great day. I love English! It is excellent and amazing.")
 
 
 @pytest.fixture
-def spanish_doc():
+def spanish_doc() -> TextDocument:
     """Spanish text with positive sentiment."""
     return TextDocument(
         content="Este es un día excelente. Me encanta el español! Es maravilloso e increíble."
@@ -26,13 +26,13 @@ def spanish_doc():
 
 
 @pytest.fixture
-def chinese_doc():
+def chinese_doc() -> TextDocument:
     """Chinese text for testing language detection edge cases."""
     return TextDocument(content="这是一个美好的一天。我喜欢学习中文非常好。")
 
 
 @pytest.fixture
-def negative_sentiment_doc():
+def negative_sentiment_doc() -> TextDocument:
     """Document with negative sentiment."""
     return TextDocument(
         content="This is a terrible day. I hate this awful situation. It is horrible and bad."
@@ -40,7 +40,7 @@ def negative_sentiment_doc():
 
 
 @pytest.fixture
-def neutral_sentiment_doc():
+def neutral_sentiment_doc() -> TextDocument:
     """Document with neutral sentiment (no sentiment words)."""
     return TextDocument(
         content="""The document contains several sentences. The data was processed yesterday.
@@ -49,7 +49,7 @@ def neutral_sentiment_doc():
 
 
 @pytest.fixture
-def mixed_doc():
+def mixed_doc() -> TextDocument:
     """Complex document with multiple sentences and mixed characteristics."""
     return TextDocument(
         content="""

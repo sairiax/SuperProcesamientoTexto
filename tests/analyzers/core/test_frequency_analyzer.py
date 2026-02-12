@@ -7,7 +7,7 @@ from procesamientotexto.models.text_document import TextDocument
 class TestFrequencyAnalyzer:
     """Test suite for FrequencyAnalyzer."""
 
-    def test_normal_document(self, english_doc):
+    def test_normal_document(self, english_doc: TextDocument):
         """Test frequency analysis on a normal English document."""
         analyzer = FrequencyAnalyzer()
         result = analyzer.analyze(english_doc)
@@ -21,7 +21,7 @@ class TestFrequencyAnalyzer:
         assert isinstance(result["word_counts"], dict)
         assert result["most_common_length"] > 0
 
-    def test_empty_document(self, empty_doc):
+    def test_empty_document(self, empty_doc: TextDocument):
         """Test frequency analysis on an empty document."""
         analyzer = FrequencyAnalyzer()
         result = analyzer.analyze(empty_doc)

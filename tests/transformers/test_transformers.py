@@ -1,8 +1,7 @@
 import pytest
-
-from src.procesamientotexto.transformers.normalizer import Normalizer
-from src.procesamientotexto.transformers.cleaner import Cleaner
-from src.procesamientotexto.transformers.tokenizer import Tokenizer
+from src.text_toolkit.transformers.cleaner import Cleaner
+from src.text_toolkit.transformers.normalizer import Normalizer
+from src.text_toolkit.transformers.tokenizer import Tokenizer
 
 
 def test_normalizer_basic():

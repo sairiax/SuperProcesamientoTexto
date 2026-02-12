@@ -1,7 +1,11 @@
-import pytest
-from src.procesamientotexto.readers import TxtReader, MarkdownReader, HtmlReader
+from pathlib import Path
 
-def test_read_txt_correctly(fixtures_dir):
+import pytest
+
+from text_toolkit.readers import HtmlReader, MarkdownReader, TxtReader
+
+
+def test_read_txt_correctly(fixtures_dir: Path):
     file_path = fixtures_dir / "txt_sample.txt"
 
     reader = TxtReader()
@@ -10,7 +14,7 @@ def test_read_txt_correctly(fixtures_dir):
     assert len(lines) > 0
     assert "Hola mundo" in lines[0]
 
-def test_read_mkd_correctly(fixtures_dir):
+def test_read_mkd_correctly(fixtures_dir: Path):
     file_path = fixtures_dir / "markdown_sample.md"
 
     reader = MarkdownReader()
@@ -18,7 +22,7 @@ def test_read_mkd_correctly(fixtures_dir):
 
     assert any("Título" in line for line in lines)
 
-def test_read_html_correctly(fixtures_dir):
+def test_read_html_correctly(fixtures_dir: Path):
     file_path = fixtures_dir / "html_sample.html"
 
     reader = HtmlReader()

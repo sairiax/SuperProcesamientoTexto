@@ -9,6 +9,8 @@ dependencies = [
     "ruff>=0.15.0",
     "stlib>=2.3.1",
     "pyright>=1.1.350",
+    "rich>=14.3.2",
+    "rich-argparse>=1.7.2",
 ]
 
 [tool.setuptools]

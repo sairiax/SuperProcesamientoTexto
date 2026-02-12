@@ -3,28 +3,40 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich_argparse import RichHelpFormatter
+
 from text_toolkit.analyzers import AnalyzerRunner
 from text_toolkit.readers.txt_reader import TXTReader
+
+# Initialize global console
+console = Console()
 
 
 def parse_arguments() -> argparse.Namespace:
     """
-    Parses command-line arguments for the text processing toolkit.
+    Parses command-line arguments using RichHelpFormatter for a better interface.
 
     Returns:
         argparse.Namespace: Parsed arguments.
     """
     parser = argparse.ArgumentParser(
-        prog="text_toolkit",
-        description="A professional toolkit for advanced text processing and analysis.",
-        epilog="Example: python main.py input.txt --output json",
+        prog="text-toolkit",
+        description="[bold blue]TextToolkit[/bold blue]: A professional suite for "
+        "advanced linguistic analysis.",
+        epilog="[italic]Example: python main.py input.txt --output json[/italic]",
+        formatter_class=RichHelpFormatter,
     )
-    # ... (rest of arguments)
+
+    # Positional argument: Input file
     parser.add_argument(
         "input_path",
         help="Path to the text file to be processed.",
     )
 
+    # Output format
     parser.add_argument(
         "-o",
         "--output",
@@ -33,6 +45,7 @@ def parse_arguments() -> argparse.Namespace:
         help="Format of the analysis results (default: %(default)s).",
     )
 
+    # Verbose mode
     parser.add_argument(
         "-v",
         "--verbose",
@@ -40,6 +53,7 @@ def parse_arguments() -> argparse.Namespace:
         help="Enable detailed logging and processing information.",
     )
 
+    # Specific analyzers (optional)
     parser.add_argument(
         "-a",
         "--analyzers",
@@ -50,7 +64,8 @@ def parse_arguments() -> argparse.Namespace:
             "ReadabilityAnalyzer",
             "SentimentAnalyzer",
         ],
-        help="List of specific analyzers to run. If omitted, all run.",
+        metavar="ANALYZER",
+        help="List of specific analyzers to run (e.g., SentimentAnalyzer). If omitted, all run.",
     )
 
     return parser.parse_args()
@@ -58,7 +73,7 @@ def parse_arguments() -> argparse.Namespace:
 
 def display_results(results: dict[str, Any], output_format: str) -> None:
     """
-    Displays the analysis results in the specified format.
+    Displays the analysis results in the specified format using Rich.
 
     Args:
         results (dict[str, Any]): The analysis findings.
@@ -67,35 +82,58 @@ def display_results(results: dict[str, Any], output_format: str) -> None:
     if output_format == "json":
         import json
 
-        print(json.dumps(results, indent=2, ensure_ascii=False))  # noqa: T201
+        json_str = json.dumps(results, indent=2, ensure_ascii=False)
+        console.print(
+            Panel(json_str, title="[bold cyan]JSON Result[/bold cyan]", border_style="cyan")
+        )
     else:
-        print("\n" + "=" * 40)  # noqa: T201
-        print(" ANALYSIS RESULTS ".center(40, "="))  # noqa: T201
-        print("=" * 40)  # noqa: T201
+        table = Table(
+            title="[bold blue]Analysis Summary[/bold blue]",
+            show_header=True,
+            header_style="bold magenta",
+        )
+        table.add_column("Metric", style="dim", width=25)
+        table.add_column("Value", style="bold green")
+
         for key, value in results.items():
             formatted_key = key.replace("_", " ").title()
-            print(f"{formatted_key:<20}: {value}")  # noqa: T201
-        print("=" * 40 + "\n")  # noqa: T201
+
+            # Special formatting for certain types
+            if isinstance(value, dict):
+                # Format sub-dictionaries (like top words) as a more readable string
+                val_str = ", ".join([f"{k}: {v}" for k, v in list(value.items())[:5]])
+                if len(value) > 5:
+                    val_str += " ..."
+            else:
+                val_str = str(value)
+
+            table.add_row(formatted_key, val_str)
+
+        console.print("\n")
+        console.print(table)
+        console.print("\n")
 
 
 def log_info(message: str, verbose: bool) -> None:
     """Logs information to stderr if verbose mode is enabled."""
     if verbose:
-        print(f"[INFO] {message}", file=sys.stderr)  # noqa: T201
+        console.print(f"[bold yellow]LOG:[/bold yellow] {message}", style="yellow")
 
 
 def main() -> None:
     """Primary execution logic for the CLI."""
-    args = parse_arguments()
-
-    log_info(f"Starting processing of: {args.input_path}", args.verbose)
-
-    input_file = Path(args.input_path)
-    if not input_file.exists():
-        print(f"Error: File not found: {args.input_path}", file=sys.stderr)  # noqa: T201
-        sys.exit(1)
-
     try:
+        args = parse_arguments()
+
+        log_info(f"Starting processing of: {args.input_path}", args.verbose)
+
+        input_file = Path(args.input_path)
+        if not input_file.exists():
+            console.print(
+                f"[bold red]Error:[/bold red] File not found: [italic]{args.input_path}[/italic]"
+            )
+            sys.exit(1)
+
         log_info("Reading document...", args.verbose)
         reader = TXTReader()
         document = reader.read(input_file)
@@ -107,12 +145,13 @@ def main() -> None:
         display_results(results, args.output)
         log_info("Processing completed successfully.", args.verbose)
 
+    except KeyboardInterrupt:
+        console.print("\n[bold red]Interrupted by user.[/bold red]")
+        sys.exit(1)
     except Exception as e:
-        print(f"Error during processing: {e}", file=sys.stderr)  # noqa: T201
-        if args.verbose:
-            import traceback
-
-            traceback.print_exc()
+        console.print(f"[bold red]Critical Error:[/bold red] {e}")
+        if "-v" in sys.argv or "--verbose" in sys.argv:
+            console.print_exception()
         sys.exit(1)
 
 

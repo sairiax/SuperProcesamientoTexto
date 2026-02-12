@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 
 from text_toolkit.models.text_document import TextDocument
 
 from ..base import Analyzer
 from .data import DataLoader
+
+logger = logging.getLogger(__name__)
 
 
 class SentimentAnalyzer(Analyzer):
@@ -53,6 +56,13 @@ class SentimentAnalyzer(Analyzer):
             "pos_count": pos_count,
             "neg_count": neg_count,
         }
+        logger.info(
+            "Sentiment result: %s (score: %.2f, pos: %d, neg: %d)",
+            sentiment,
+            score,
+            pos_count,
+            neg_count,
+        )
         return result
 
     def _get_label(self, score: float) -> str:

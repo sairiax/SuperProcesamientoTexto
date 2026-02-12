@@ -1,3 +1,4 @@
+import logging
 from collections import Counter
 from typing import Any
 
@@ -5,10 +6,13 @@ from text_toolkit.models.text_document import TextDocument
 
 from ..base import Analyzer
 
+# Use the package-level logger hierarchy
+logger = logging.getLogger(__name__)
+
 
 class FrequencyAnalyzer(Analyzer):
     """
-    Analyzer that calculates word frequencies and token AnalyzerRunner.
+    Analyzer that calculates word frequencies and token statistics.
 
     This analyzer counts the occurrences of each word, the total number of words,
     and determines the most common token length.
@@ -16,7 +20,7 @@ class FrequencyAnalyzer(Analyzer):
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
-        Analyzes the document to extract frequency AnalyzerRunner.
+        Analyzes the document to extract frequency statistics.
 
         Args:
             document (TextDocument): The document to analyze.
@@ -31,16 +35,17 @@ class FrequencyAnalyzer(Analyzer):
         tokens = document.tokens
 
         if not tokens:
-            # TODO: log.warning -> Zero tokens to analyze
+            logger.warning("Document contains no tokens. Skipping frequency analysis.")
             return self._empty_result()
 
-        # TODO: log.info -> starting frequency analysis
+        logger.info("Starting frequency analysis on %d tokens.", len(tokens))
         word_counts = Counter(tokens)
         length_counts = Counter(map(len, tokens))
 
         most_common_len_data = length_counts.most_common(1)
         most_common_len = most_common_len_data[0][0] if most_common_len_data else 0
-        # TODO: log.info -> ends frequency analysis
+
+        logger.info("Frequency analysis completed. Most common word length: %d", most_common_len)
 
         result = {
             "total_words": len(tokens),

@@ -1,9 +1,11 @@
 import argparse
+import logging
 import sys
 from pathlib import Path
 from typing import Any
 
 from rich.console import Console
+from rich.logging import RichHandler
 from rich.panel import Panel
 from rich.table import Table
 from rich_argparse import RichHelpFormatter
@@ -15,6 +17,18 @@ from text_toolkit.readers.txt_reader import TXTReader
 console = Console()
 
 
+def setup_logging(verbose: bool) -> None:
+    """Configures the logging system to use Rich for output if verbose is enabled."""
+    level = logging.INFO if verbose else logging.WARNING
+    logging.basicConfig(
+        level=level,
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[RichHandler(console=console, rich_tracebacks=True, show_path=False)],
+    )
+
+
+# TODO: Add try-cath?
 def parse_arguments() -> argparse.Namespace:
     """
     Parses command-line arguments using RichHelpFormatter for a better interface.
@@ -122,6 +136,11 @@ def log_info(message: str, verbose: bool) -> None:
 
 def main() -> None:
     """Primary execution logic for the CLI."""
+    # First pass to see if we need verbose logging for the rest of setup
+    _temp_args, _ = argparse.ArgumentParser().parse_known_args()
+    verbose = "-v" in sys.argv or "--verbose" in sys.argv
+    setup_logging(verbose)
+
     try:
         args = parse_arguments()
 

@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 
 from text_toolkit.models.text_document import TextDocument
 
 from ..base import Analyzer
 from .data import DataLoader
+
+logger = logging.getLogger(__name__)
 
 
 class LanguageDetector(Analyzer):
@@ -50,4 +53,5 @@ class LanguageDetector(Analyzer):
             best_lang = "unknown"
 
         result = {"language": best_lang, "confidence": round(confidence, 2)}
+        logger.info("Language detection result: %s (confidence: %.2f)", best_lang, confidence)
         return result

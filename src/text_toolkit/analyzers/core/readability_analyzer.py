@@ -1,3 +1,4 @@
+import logging
 import re
 from typing import Any
 
@@ -5,6 +6,8 @@ from text_toolkit.models.text_document import TextDocument
 
 from ..base import Analyzer
 from .data import DataLoader
+
+logger = logging.getLogger(__name__)
 
 
 class ReadabilityAnalyzer(Analyzer):
@@ -43,6 +46,13 @@ class ReadabilityAnalyzer(Analyzer):
 
         language = self._get_document_language(document)
         complexity = self._calculate_complexity(avg_sentence_len, avg_word_len, language)
+
+        logger.info(
+            "Readability stats - Complexity: %s, Avg sentence: %.2f, Language source: %s",
+            complexity,
+            avg_sentence_len,
+            language,
+        )
 
         return {
             "avg_sentence_length": round(avg_sentence_len, 2),

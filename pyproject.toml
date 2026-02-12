@@ -11,6 +11,7 @@ dependencies = [
     "pyright>=1.1.350",
     "rich>=14.3.2",
     "rich-argparse>=1.7.2",
+    "pydantic>=2.12.5",
 ]
 
 [tool.setuptools]

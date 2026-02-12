@@ -1,6 +1,9 @@
 import logging
 import re
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from text_toolkit.models.config_models import ReadabilityConfig
 
 from text_toolkit.models.text_document import TextDocument
 
@@ -20,7 +23,7 @@ class ReadabilityAnalyzer(Analyzer):
 
     def __init__(self) -> None:
         """Initializes the ReadabilityAnalyzer by loading thresholds from JSON."""
-        self._thresholds: dict[str, dict[str, float]] = DataLoader.load_readability_thresholds()
+        self._thresholds: ReadabilityConfig = DataLoader.load_readability_thresholds()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -100,11 +103,11 @@ class ReadabilityAnalyzer(Analyzer):
         Returns:
             str: Complexity level ('low', 'medium', or 'high').
         """
-        thresholds = self._thresholds.get(language, self._thresholds["default"])
+        thresholds = getattr(self._thresholds, language, self._thresholds.default)
 
-        if avg_sentence_len > thresholds["sent_high"] or avg_word_len > thresholds["word_high"]:
+        if avg_sentence_len > thresholds.sent_high or avg_word_len > thresholds.word_high:
             return "high"
-        if avg_sentence_len > thresholds["sent_med"] or avg_word_len > thresholds["word_med"]:
+        if avg_sentence_len > thresholds.sent_med or avg_word_len > thresholds.word_med:
             return "medium"
         return "low"
 

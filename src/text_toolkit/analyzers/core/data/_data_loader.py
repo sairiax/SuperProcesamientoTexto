@@ -1,7 +1,10 @@
 import json
 from collections.abc import Generator
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from text_toolkit.models.config_models import ReadabilityConfig
 
 
 class DataLoadError(Exception):
@@ -86,10 +89,13 @@ class DataLoader:
         return pos, neg
 
     @classmethod
-    def load_readability_thresholds(cls) -> dict[str, dict[str, float]]:
-        """Specialized loader for readability thresholds.
+    def load_readability_thresholds(cls) -> "ReadabilityConfig":
+        """Specialized loader for readability thresholds with Pydantic validation.
 
         Returns:
-            dict[str, dict[str, float]]: Thresholds mapping.
+            ReadabilityConfig: Validated configuration object.
         """
-        return cls.load_json("readability_thresholds.json")
+        from text_toolkit.models.config_models import ReadabilityConfig
+
+        data = cls.load_json("readability_thresholds.json")
+        return ReadabilityConfig.model_validate(data)

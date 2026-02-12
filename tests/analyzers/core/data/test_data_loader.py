@@ -36,12 +36,14 @@ class TestDataLoader:
 
     def test_load_readability_thresholds_real_data(self):
         """Integration test: Verify that real readability thresholds can be loaded."""
+        from text_toolkit.models.config_models import ReadabilityConfig
+
         thresholds = DataLoader.load_readability_thresholds()
-        assert isinstance(thresholds, dict)
-        assert "en" in thresholds
-        assert "es" in thresholds
-        assert "sent_high" in thresholds["en"]
-        assert "word_high" in thresholds["en"]
+        assert isinstance(thresholds, ReadabilityConfig)
+        assert hasattr(thresholds, "en")
+        assert hasattr(thresholds, "es")
+        assert thresholds.en.sent_high > 0
+        assert thresholds.en.word_high > 0
 
     def test_load_json_missing_file(self):
         """Edge case: Verify that DataLoadError is raised for missing files."""

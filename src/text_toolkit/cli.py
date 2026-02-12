@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from pydantic import ValidationError
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.panel import Panel
@@ -11,6 +12,7 @@ from rich.table import Table
 from rich_argparse import RichHelpFormatter
 
 from text_toolkit.analyzers import AnalyzerRunner
+from text_toolkit.models.config_models import CLIConfig
 from text_toolkit.readers.txt_reader import TXTReader
 
 # Initialize global console
@@ -137,32 +139,43 @@ def log_info(message: str, verbose: bool) -> None:
 def main() -> None:
     """Primary execution logic for the CLI."""
     # First pass to see if we need verbose logging for the rest of setup
-    _temp_args, _ = argparse.ArgumentParser().parse_known_args()
     verbose = "-v" in sys.argv or "--verbose" in sys.argv
     setup_logging(verbose)
 
     try:
         args = parse_arguments()
 
-        log_info(f"Starting processing of: {args.input_path}", args.verbose)
+        # Validate arguments using Pydantic for "professional" architecture
+        try:
+            config = CLIConfig(
+                input_path=args.input_path,
+                output=args.output,
+                verbose=args.verbose,
+                analyzers=args.analyzers,
+            )
+        except ValidationError as ve:
+            console.print(f"[bold red]Configuration Error:[/bold red] {ve}")
+            sys.exit(1)
 
-        input_file = Path(args.input_path)
+        log_info(f"Starting processing of: {config.input_path}", config.verbose)
+
+        input_file = Path(config.input_path)
         if not input_file.exists():
             console.print(
-                f"[bold red]Error:[/bold red] File not found: [italic]{args.input_path}[/italic]"
+                f"[bold red]Error:[/bold red] File not found: [italic]{config.input_path}[/italic]"
             )
             sys.exit(1)
 
-        log_info("Reading document...", args.verbose)
+        log_info("Reading document...", config.verbose)
         reader = TXTReader()
         document = reader.read(input_file)
 
-        log_info("Running linguistic analysis...", args.verbose)
-        runner = AnalyzerRunner(analyzer_names=args.analyzers)
+        log_info("Running linguistic analysis...", config.verbose)
+        runner = AnalyzerRunner(analyzer_names=config.analyzers)
         results = runner.analyze(document)
 
-        display_results(results, args.output)
-        log_info("Processing completed successfully.", args.verbose)
+        display_results(results, config.output)
+        log_info("Processing completed successfully.", config.verbose)
 
     except KeyboardInterrupt:
         console.print("\n[bold red]Interrupted by user.[/bold red]")

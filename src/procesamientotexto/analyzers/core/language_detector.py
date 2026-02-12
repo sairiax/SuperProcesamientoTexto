@@ -3,7 +3,7 @@ from typing import Any
 from procesamientotexto.models.text_document import TextDocument
 
 from ..base import Analyzer
-from ._language_data import STOPWORDS
+from ._data_loader import DataLoader
 
 
 class LanguageDetector(Analyzer):
@@ -13,6 +13,10 @@ class LanguageDetector(Analyzer):
     Uses a stopword overlap heuristic to identify the most likely language
     from a set of supported languages (es, en, fr, de, it, pt).
     """
+
+    def __init__(self) -> None:
+        """Initializes the LanguageDetector by loading stopwords from JSON."""
+        self._stopwords = DataLoader.load_stopwords()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -34,9 +38,9 @@ class LanguageDetector(Analyzer):
             return result
 
         scores = {}
-        for lang, stopwords in STOPWORDS.items():
-            intersection = words.intersection(stopwords)
-            scores[lang] = len(intersection) / len(stopwords)
+        for lang, words_list in self._stopwords.items():
+            intersection = words.intersection(words_list)
+            scores[lang] = len(intersection) / len(words_list) if words_list else 0.0
 
         best_lang = max(scores, key=scores.get)
         confidence = scores[best_lang]

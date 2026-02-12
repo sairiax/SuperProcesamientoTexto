@@ -4,7 +4,7 @@ from typing import Any
 from procesamientotexto.models.text_document import TextDocument
 
 from ..base import Analyzer
-from ._readability_data import COMPLEXITY_THRESHOLDS
+from ._data_loader import DataLoader
 
 
 class ReadabilityAnalyzer(Analyzer):
@@ -14,6 +14,10 @@ class ReadabilityAnalyzer(Analyzer):
     Calculates average sentence length and average word length to estimate
     complexity, adjusting for the document's language if available.
     """
+
+    def __init__(self) -> None:
+        """Initializes the ReadabilityAnalyzer by loading thresholds from JSON."""
+        self._thresholds = DataLoader.load_readability_thresholds()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -86,7 +90,7 @@ class ReadabilityAnalyzer(Analyzer):
         Returns:
             str: Complexity level ('low', 'medium', or 'high').
         """
-        thresholds = COMPLEXITY_THRESHOLDS.get(language, COMPLEXITY_THRESHOLDS["default"])
+        thresholds = self._thresholds.get(language, self._thresholds["default"])
 
         if avg_sentence_len > thresholds["sent_high"] or avg_word_len > thresholds["word_high"]:
             return "high"

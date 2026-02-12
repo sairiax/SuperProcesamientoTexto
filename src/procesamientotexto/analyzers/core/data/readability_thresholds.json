@@ -1,0 +1,20 @@
+{
+    "es": {
+        "sent_high": 30,
+        "sent_med": 20,
+        "word_high": 6.5,
+        "word_med": 5.5
+    },
+    "en": {
+        "sent_high": 25,
+        "sent_med": 15,
+        "word_high": 6.0,
+        "word_med": 5.0
+    },
+    "default": {
+        "sent_high": 25,
+        "sent_med": 15,
+        "word_high": 6.0,
+        "word_med": 5.0
+    }
+}

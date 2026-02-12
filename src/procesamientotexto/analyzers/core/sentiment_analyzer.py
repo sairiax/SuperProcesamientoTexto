@@ -3,7 +3,7 @@ from typing import Any
 from procesamientotexto.models.text_document import TextDocument
 
 from ..base import Analyzer
-from ._sentiment_data import NEG_WORDS, POS_WORDS
+from ._data_loader import DataLoader
 
 
 class SentimentAnalyzer(Analyzer):
@@ -13,6 +13,10 @@ class SentimentAnalyzer(Analyzer):
     Classifies sentiment as positive, negative, or neutral based on
     the presence of predefined keywords.
     """
+
+    def __init__(self) -> None:
+        """Initializes the SentimentAnalyzer by loading keywords from JSON."""
+        self._pos_words, self._neg_words = DataLoader.load_sentiment_words()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -32,8 +36,8 @@ class SentimentAnalyzer(Analyzer):
         if not words:
             return self._empty_result()
 
-        pos_count = sum(1 for w in words if w in POS_WORDS)
-        neg_count = sum(1 for w in words if w in NEG_WORDS)
+        pos_count = sum(1 for w in words if w in self._pos_words)
+        neg_count = sum(1 for w in words if w in self._neg_words)
         total_sentiment_words = pos_count + neg_count
 
         score = (

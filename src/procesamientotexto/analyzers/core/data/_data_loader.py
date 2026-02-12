@@ -9,7 +9,7 @@ class DataLoadError(Exception):
 
 
 class DataLoader:
-    """Utility for robust and professional data loading from JSON files."""
+    """Utility for robust data loading from JSON files."""
 
     @staticmethod
     def get_data_path(filename: str) -> Path:
@@ -53,7 +53,7 @@ class DataLoader:
 
     @staticmethod
     def to_set_generator(items: list[str]) -> Generator[str, None, None]:
-        """Professional generator-based conversion.
+        """Generator-based conversion.
 
         Args:
             items (list[str]): List of items.
@@ -71,7 +71,6 @@ class DataLoader:
             dict[str, set[str]]: Mapping of language codes to sets of stopwords.
         """
         data = cls.load_json("stopwords.json")
-        # Defensive conversion of lists to sets using generators
         return {lang: set(words) for lang, words in data.items()}
 
     @classmethod
@@ -82,7 +81,6 @@ class DataLoader:
             tuple[set[str], set[str]]: (positive_words, negative_words)
         """
         data = cls.load_json("sentiment_words.json")
-        # Adhering to professional standards by using tuple destructuring
         pos = set(data.get("positive", []))
         neg = set(data.get("negative", []))
         return pos, neg

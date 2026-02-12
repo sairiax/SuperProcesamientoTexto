@@ -1,3 +1,3 @@
-from ._data_loader import DataLoader
+from ._data_loader import DataLoader, DataLoadError
 
-__all__ = ["DataLoader"]
+__all__ = ["DataLoadError", "DataLoader"]

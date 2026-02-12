@@ -19,9 +19,14 @@ from text_toolkit.readers.txt_reader import TXTReader
 console = Console()
 
 
-def setup_logging(verbose: bool) -> None:
-    """Configures the logging system to use Rich for output if verbose is enabled."""
-    level = logging.INFO if verbose else logging.WARNING
+def setup_logging(verbosity: int) -> None:
+    """Configures the logging system using a verbosity level."""
+    if verbosity >= 2:
+        level = logging.DEBUG
+    elif verbosity == 1:
+        level = logging.INFO
+    else:
+        level = logging.WARNING
     logging.basicConfig(
         level=level,
         format="%(message)s",
@@ -61,12 +66,13 @@ def parse_arguments() -> argparse.Namespace:
         help="Format of the analysis results (default: %(default)s).",
     )
 
-    # Verbose mode
+    # Verbosity (-v for info, -vv for debug)
     parser.add_argument(
         "-v",
         "--verbose",
-        action="store_true",
-        help="Enable detailed logging and processing information.",
+        action="count",
+        default=0,
+        help="Increase verbosity (-v for info, -vv for debug).",
     )
 
     # Specific analyzers (optional)
@@ -138,19 +144,18 @@ def log_info(message: str, verbose: bool) -> None:
 
 def main() -> None:
     """Primary execution logic for the CLI."""
-    # First pass to see if we need verbose logging for the rest of setup
-    verbose = "-v" in sys.argv or "--verbose" in sys.argv
-    setup_logging(verbose)
+    args: argparse.Namespace | None = None
 
     try:
         args = parse_arguments()
+        setup_logging(args.verbose)
 
         # Validate arguments using Pydantic for "professional" architecture
         try:
             config = CLIConfig(
                 input_path=args.input_path,
                 output=args.output,
-                verbose=args.verbose,
+                verbose=args.verbose > 0,
                 analyzers=args.analyzers,
             )
         except ValidationError as ve:
@@ -182,7 +187,7 @@ def main() -> None:
         sys.exit(1)
     except Exception as e:
         console.print(f"[bold red]Critical Error:[/bold red] {e}")
-        if "-v" in sys.argv or "--verbose" in sys.argv:
+        if args and args.verbose > 0:
             console.print_exception()
         sys.exit(1)
 

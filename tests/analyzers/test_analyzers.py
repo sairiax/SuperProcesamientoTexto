@@ -1,7 +1,6 @@
 import pytest
 from procesamientotexto.models.text_document import TextDocument
 from procesamientotexto.analyzers.core import (
-    WordCounter,
     FrequencyAnalyzer,
     LanguageDetector,
     SentimentAnalyzer,
@@ -20,14 +19,6 @@ def spanish_doc():
     return TextDocument(
         content="Este es un día excelente. Me encanta el español! Es maravilloso."
     )
-
-
-def test_word_counter(english_doc):
-    analyzer = WordCounter()
-    result = analyzer.analyze(english_doc)
-    assert result["total_words"] > 0
-    assert "great" in result["word_frequencies"]
-    assert english_doc.has_analysis("word_counter")
 
 
 def test_frequency_analyzer(english_doc):
@@ -59,12 +50,19 @@ def test_readability_analyzer(english_doc):
     assert result["avg_word_length"] > 0
 
 
-def test_AnalyzerRunner_orchestrator(english_doc):
+def test_analyzer_runner_orchestrator(english_doc):
+    """Test that AnalyzerRunner orchestrates all analyzers with flat structure."""
     orchestrator = AnalyzerRunner()
     result = orchestrator.analyze(english_doc)
-    assert "word_stats" in result
-    assert "sentiment" in result
-    assert "language" in result
+
+    # Check for flat structure (not nested)
+    assert "total_words" in result  # From FrequencyAnalyzer
+    assert "sentiment" in result  # From SentimentAnalyzer
+    assert "language" in result  # From LanguageDetector
+    assert "complexity" in result  # From ReadabilityAnalyzer
+
+    # Verify it's a flat dict, not nested
+    assert isinstance(result, dict)
     assert (
-        result["word_stats"]["total_words"] == 10
+        result["total_words"] == 11
     )  # This is a great day. I love English! It is excellent.

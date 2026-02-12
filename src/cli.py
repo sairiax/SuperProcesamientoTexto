@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 
 from procesamientotexto.readers.txt_reader import TXTReader
-from procesamientotexto.analyzers.analyzer import AnalyzerRunner
+from procesamientotexto.analyzers.analyzer_runner import AnalyzerRunner
 
 
 def main():

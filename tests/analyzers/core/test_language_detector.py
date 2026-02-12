@@ -1,6 +1,5 @@
 """Tests for LanguageDetector."""
 
-import pytest
 from procesamientotexto.analyzers.core import LanguageDetector
 from procesamientotexto.models.text_document import TextDocument
 

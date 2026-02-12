@@ -1,7 +1,10 @@
-from typing import Any, Dict
-from ..base import Analyzer
-from procesamientotexto.models.text_document import TextDocument
 import re
+from typing import Any
+
+from procesamientotexto.models.text_document import TextDocument
+
+from ..base import Analyzer
+from ._readability_data import COMPLEXITY_THRESHOLDS
 
 
 class ReadabilityAnalyzer(Analyzer):
@@ -12,30 +15,7 @@ class ReadabilityAnalyzer(Analyzer):
     complexity, adjusting for the document's language if available.
     """
 
-    # TODO: add more language support
-    # Language-specific thresholds for complexity classification
-    COMPLEXITY_THRESHOLDS: Dict[str, Dict[str, float]] = {
-        "es": {
-            "sent_high": 30,
-            "sent_med": 20,
-            "word_high": 6.5,
-            "word_med": 5.5,
-        },
-        "en": {
-            "sent_high": 25,
-            "sent_med": 15,
-            "word_high": 6.0,
-            "word_med": 5.0,
-        },
-        "default": {
-            "sent_high": 25,
-            "sent_med": 15,
-            "word_high": 6.0,
-            "word_med": 5.0,
-        },
-    }
-
-    def analyze(self, document: TextDocument) -> Dict[str, Any]:
+    def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
         Analyzes the readability of the document.
 
@@ -43,7 +23,7 @@ class ReadabilityAnalyzer(Analyzer):
             document (TextDocument): The document to analyze.
 
         Returns:
-            Dict[str, Any]: A dictionary containing:
+            dict[str, Any]: A dictionary containing:
                 - 'avg_sentence_length': Average number of words per sentence.
                 - 'avg_word_length': Average characters per word.
                 - 'complexity': 'low', 'medium', 'high', or 'unknown'.
@@ -58,9 +38,7 @@ class ReadabilityAnalyzer(Analyzer):
         avg_word_len = sum(len(w) for w in words) / len(words)
 
         language = self._get_document_language(document)
-        complexity = self._calculate_complexity(
-            avg_sentence_len, avg_word_len, language
-        )
+        complexity = self._calculate_complexity(avg_sentence_len, avg_word_len, language)
 
         return {
             "avg_sentence_length": round(avg_sentence_len, 2),
@@ -108,22 +86,13 @@ class ReadabilityAnalyzer(Analyzer):
         Returns:
             str: Complexity level ('low', 'medium', or 'high').
         """
-        thresholds = self.COMPLEXITY_THRESHOLDS.get(
-            language, self.COMPLEXITY_THRESHOLDS["default"]
-        )
+        thresholds = COMPLEXITY_THRESHOLDS.get(language, COMPLEXITY_THRESHOLDS["default"])
 
-        if (
-            avg_sentence_len > thresholds["sent_high"]
-            or avg_word_len > thresholds["word_high"]
-        ):
+        if avg_sentence_len > thresholds["sent_high"] or avg_word_len > thresholds["word_high"]:
             return "high"
-        elif (
-            avg_sentence_len > thresholds["sent_med"]
-            or avg_word_len > thresholds["word_med"]
-        ):
+        if avg_sentence_len > thresholds["sent_med"] or avg_word_len > thresholds["word_med"]:
             return "medium"
-        else:
-            return "low"
+        return "low"
 
     @staticmethod
     def _empty_result() -> dict[str, Any]:

@@ -1,6 +1,5 @@
 """Tests for FrequencyAnalyzer."""
 
-import pytest
 from procesamientotexto.analyzers.core import FrequencyAnalyzer
 from procesamientotexto.models.text_document import TextDocument
 

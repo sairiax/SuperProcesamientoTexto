@@ -1,6 +1,9 @@
-from typing import Any, Dict
-from ..base import Analyzer
+from typing import Any
+
 from procesamientotexto.models.text_document import TextDocument
+
+from ..base import Analyzer
+from ._language_data import STOPWORDS
 
 
 class LanguageDetector(Analyzer):
@@ -10,111 +13,6 @@ class LanguageDetector(Analyzer):
     Uses a stopword overlap heuristic to identify the most likely language
     from a set of supported languages (es, en, fr, de, it, pt).
     """
-
-    STOPWORDS: Dict[str, set[str]] = {
-        "es": {
-            "el",
-            "la",
-            "de",
-            "que",
-            "y",
-            "a",
-            "en",
-            "un",
-            "ser",
-            "se",
-            "no",
-            "por",
-            "con",
-            "para",
-            "lo",
-        },
-        "en": {
-            "the",
-            "be",
-            "to",
-            "of",
-            "and",
-            "a",
-            "in",
-            "that",
-            "have",
-            "i",
-            "it",
-            "for",
-            "not",
-            "on",
-            "with",
-        },
-        "fr": {
-            "le",
-            "la",
-            "de",
-            "et",
-            "un",
-            "être",
-            "en",
-            "à",
-            "que",
-            "ne",
-            "pas",
-            "ce",
-            "sur",
-            "se",
-            "pour",
-        },
-        "de": {
-            "der",
-            "die",
-            "das",
-            "und",
-            "sein",
-            "in",
-            "ein",
-            "zu",
-            "haben",
-            "von",
-            "den",
-            "mit",
-            "für",
-            "auf",
-            "ist",
-        },
-        "it": {
-            "il",
-            "di",
-            "e",
-            "a",
-            "che",
-            "un",
-            "in",
-            "per",
-            "non",
-            "uno",
-            "da",
-            "con",
-            "si",
-            "lo",
-            "la",
-        },
-        "pt": {
-            "o",
-            "a",
-            "de",
-            "que",
-            "e",
-            "do",
-            "da",
-            "em",
-            "um",
-            "para",
-            "com",
-            "não",
-            "uma",
-            "os",
-            "as",
-        },
-    }
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -136,7 +34,7 @@ class LanguageDetector(Analyzer):
             return result
 
         scores = {}
-        for lang, stopwords in self.STOPWORDS.items():
+        for lang, stopwords in STOPWORDS.items():
             intersection = words.intersection(stopwords)
             scores[lang] = len(intersection) / len(stopwords)
 

@@ -1,7 +1,6 @@
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Optional
-import re
 
 
 @dataclass()
@@ -39,10 +38,10 @@ class TextDocument:
     source_path: Path | None = None
     metadata: dict = field(default_factory=dict)
     analysis_results: dict = field(default_factory=dict)
-    _tokens: Optional[List[str]] = field(default=None, init=False)
+    _tokens: list[str] | None = field(default=None, init=False)
 
     @property
-    def tokens(self) -> List[str]:
+    def tokens(self) -> list[str]:
         """Lazy loads and returns the list of tokens (words)."""
         if self._tokens is None:
             # Simple tokenization: word characters only, lowercase

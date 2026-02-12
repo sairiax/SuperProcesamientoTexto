@@ -1,6 +1,7 @@
 """Shared fixtures for analyzer tests."""
 
 import pytest
+
 from procesamientotexto.models.text_document import TextDocument
 
 
@@ -13,9 +14,7 @@ def empty_doc():
 @pytest.fixture
 def english_doc():
     """English text with positive sentiment."""
-    return TextDocument(
-        content="This is a great day. I love English! It is excellent and amazing."
-    )
+    return TextDocument(content="This is a great day. I love English! It is excellent and amazing.")
 
 
 @pytest.fixture
@@ -29,7 +28,7 @@ def spanish_doc():
 @pytest.fixture
 def chinese_doc():
     """Chinese text for testing language detection edge cases."""
-    return TextDocument(content="这是一个美好的一天。我喜欢学习中文！非常好。")
+    return TextDocument(content="这是一个美好的一天。我喜欢学习中文非常好。")
 
 
 @pytest.fixture
@@ -44,7 +43,8 @@ def negative_sentiment_doc():
 def neutral_sentiment_doc():
     """Document with neutral sentiment (no sentiment words)."""
     return TextDocument(
-        content="The document contains several sentences. The data was processed yesterday. Results are available now."
+        content="""The document contains several sentences. The data was processed yesterday.
+        Results are available now."""
     )
 
 
@@ -54,7 +54,8 @@ def mixed_doc():
     return TextDocument(
         content="""
         The quick brown fox jumps over the lazy dog. This is a sentence with moderate complexity.
-        Another sentence follows here. Testing readability metrics requires varied sentence structures.
-        Short one. This is getting more complex as we add additional subordinate clauses and longer words.
+        Another sentence follows here. Testing readability metrics requires varied sentence
+        structures. Short one. This is getting more complex as we add additional subordinate clauses
+         and longer words.
         """
     )

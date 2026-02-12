@@ -1,6 +1,6 @@
-from abc import ABC
-from typing import List, Pattern
 import re
+from abc import ABC
+from re import Pattern
 
 from procesamientotexto.models.text_document import TextDocument
 
@@ -36,7 +36,7 @@ class BaseExtractor(ABC):
             except re.error as exc:
                 raise ValueError(f"Invalid regex pattern: {pattern}") from exc
 
-    def extract(self, text: str) -> List[str]:
+    def extract(self, text: str) -> list[str]:
         """
         Extract all matches from the input text using all registered patterns.
 

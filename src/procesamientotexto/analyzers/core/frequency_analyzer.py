@@ -1,9 +1,9 @@
 from collections import Counter
-
 from typing import Any
 
-from ..base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
+
+from ..base import Analyzer
 
 
 class FrequencyAnalyzer(Analyzer):

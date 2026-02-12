@@ -1,8 +1,6 @@
 """Tests for AnalyzerRunner."""
 
-import pytest
 from procesamientotexto.analyzers.analyzer_runner import AnalyzerRunner
-from procesamientotexto.models.text_document import TextDocument
 
 
 class TestAnalyzerRunner:
@@ -171,8 +169,8 @@ class TestAnalyzerRunner:
         from procesamientotexto.analyzers.core import (
             FrequencyAnalyzer,
             LanguageDetector,
-            SentimentAnalyzer,
             ReadabilityAnalyzer,
+            SentimentAnalyzer,
         )
 
         analyzer_types = [type(a) for a in runner.analyzers]

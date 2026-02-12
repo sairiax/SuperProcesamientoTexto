@@ -1,12 +1,13 @@
 import pytest
-from procesamientotexto.models.text_document import TextDocument
+
+from procesamientotexto.analyzers import AnalyzerRunner
 from procesamientotexto.analyzers.core import (
     FrequencyAnalyzer,
     LanguageDetector,
-    SentimentAnalyzer,
     ReadabilityAnalyzer,
+    SentimentAnalyzer,
 )
-from procesamientotexto.analyzers import AnalyzerRunner
+from procesamientotexto.models.text_document import TextDocument
 
 
 @pytest.fixture
@@ -16,9 +17,7 @@ def english_doc():
 
 @pytest.fixture
 def spanish_doc():
-    return TextDocument(
-        content="Este es un día excelente. Me encanta el español! Es maravilloso."
-    )
+    return TextDocument(content="Este es un día excelente. Me encanta el español! Es maravilloso.")
 
 
 def test_frequency_analyzer(english_doc):
@@ -63,6 +62,4 @@ def test_analyzer_runner_orchestrator(english_doc):
 
     # Verify it's a flat dict, not nested
     assert isinstance(result, dict)
-    assert (
-        result["total_words"] == 11
-    )  # This is a great day. I love English! It is excellent.
+    assert result["total_words"] == 11  # This is a great day. I love English! It is excellent.

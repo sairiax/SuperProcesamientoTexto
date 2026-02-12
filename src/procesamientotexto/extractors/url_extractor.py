@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from procesamientotexto.extractors.base import BaseExtractor
 from procesamientotexto.models.text_document import TextDocument
 
@@ -13,12 +15,11 @@ class URLExtractor(BaseExtractor):
 
     """
 
-    _url_patterns = [
-            r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # HTTP/HTTPS URLs
-            r"ftp://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",     # FTP URLs
-            r"www\.(?:[-\w.]|(?:%[\da-fA-F]{2}))+",      # www URLs without protocol
+    _url_patterns: ClassVar[list[str]] = [
+        r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # HTTP/HTTPS URLs
+        r"ftp://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # FTP URLs
+        r"www\.(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # www URLs without protocol
     ]
 
     def __init__(self, text_document: TextDocument) -> None:
         super().__init__(text_document, self._url_patterns)
-

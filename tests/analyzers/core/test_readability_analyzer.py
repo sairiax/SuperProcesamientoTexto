@@ -1,6 +1,5 @@
 """Tests for ReadabilityAnalyzer."""
 
-import pytest
 from procesamientotexto.analyzers.core import ReadabilityAnalyzer
 from procesamientotexto.models.text_document import TextDocument
 

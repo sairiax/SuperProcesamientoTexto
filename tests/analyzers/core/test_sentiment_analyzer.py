@@ -1,6 +1,5 @@
 """Tests for SentimentAnalyzer."""
 
-import pytest
 from procesamientotexto.analyzers.core import SentimentAnalyzer
 from procesamientotexto.models.text_document import TextDocument
 
@@ -138,5 +137,4 @@ class TestSentimentAnalyzer:
 
         assert result["pos_count"] == 3
         assert result["neg_count"] == 1
-        # Score: (3-1)/(3+1) = 0.5
-        assert result["score"] == 0.5
+        assert result["score"] == 0.5  # Score: (3-1)/(3+1) = 0.5

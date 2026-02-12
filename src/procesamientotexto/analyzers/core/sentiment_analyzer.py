@@ -1,6 +1,9 @@
-from typing import Any, Dict
-from ..base import Analyzer
+from typing import Any
+
 from procesamientotexto.models.text_document import TextDocument
+
+from ..base import Analyzer
+from ._sentiment_data import NEG_WORDS, POS_WORDS
 
 
 class SentimentAnalyzer(Analyzer):
@@ -11,47 +14,7 @@ class SentimentAnalyzer(Analyzer):
     the presence of predefined keywords.
     """
 
-    # TODO: Add support for more languages
-    POS_WORDS = {
-        "good",
-        "great",
-        "excellent",
-        "happy",
-        "love",
-        "best",
-        "positive",
-        "awesome",
-        "amazing",
-        "bueno",
-        "excelente",
-        "feliz",
-        "amor",
-        "mejor",
-        "positivo",
-        "increible",
-        "maravilloso",
-    }
-    NEG_WORDS = {
-        "bad",
-        "terrible",
-        "awful",
-        "sad",
-        "hate",
-        "worst",
-        "negative",
-        "horrible",
-        "poor",
-        "malo",
-        "terrible",
-        "horrible",
-        "triste",
-        "odio",
-        "peor",
-        "negativo",
-        "pobre",
-    }
-
-    def analyze(self, document: TextDocument) -> Dict[str, Any]:
+    def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
         Analyzes the sentiment of the document.
 
@@ -59,7 +22,7 @@ class SentimentAnalyzer(Analyzer):
             document (TextDocument): The document to analyze.
 
         Returns:
-            Dict[str, Any]: A dictionary containing:
+            dict[str, Any]: A dictionary containing:
                 - 'sentiment': 'positive', 'negative', or 'neutral'.
                 - 'score': A float score between -1.0 and 1.0.
                 - 'pos_count': Number of positive words found.
@@ -69,14 +32,12 @@ class SentimentAnalyzer(Analyzer):
         if not words:
             return self._empty_result()
 
-        pos_count = sum(1 for w in words if w in self.POS_WORDS)
-        neg_count = sum(1 for w in words if w in self.NEG_WORDS)
+        pos_count = sum(1 for w in words if w in POS_WORDS)
+        neg_count = sum(1 for w in words if w in NEG_WORDS)
         total_sentiment_words = pos_count + neg_count
 
         score = (
-            (pos_count - neg_count) / total_sentiment_words
-            if total_sentiment_words > 0
-            else 0.0
+            (pos_count - neg_count) / total_sentiment_words if total_sentiment_words > 0 else 0.0
         )
         sentiment = self._get_label(score)
 
@@ -91,10 +52,9 @@ class SentimentAnalyzer(Analyzer):
     def _get_label(self, score: float) -> str:
         if score > 0.1:
             return "positive"
-        elif score < -0.1:
+        if score < -0.1:
             return "negative"
-        else:
-            return "neutral"
+        return "neutral"
 
     @staticmethod
     def _empty_result() -> dict[str, Any]:

@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from procesamientotexto.extractors.base import BaseExtractor
 from procesamientotexto.models.text_document import TextDocument
 
@@ -14,14 +16,13 @@ class DateExtractor(BaseExtractor):
 
     """
 
-    _date_patterns = [
-            r"\d{4}-\d{2}-\d{2}",                                                      # YYYY-MM-DD
-            r"\d{2}/\d{2}/\d{4}",                                                      # DD/MM/YYYY or MM/DD/YYYY
-            r"\d{2}-\d{2}-\d{4}",                                                      # DD-MM-YYYY or MM-DD-YYYY
-            r"\d{1,2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{4}",    # 01 Jan 2026
-            r"\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4}",      # 01-Jan-2026
+    _date_patterns: ClassVar[list[str]] = [
+        r"\d{4}-\d{2}-\d{2}",  # YYYY-MM-DD
+        r"\d{2}/\d{2}/\d{4}",  # DD/MM/YYYY or MM/DD/YYYY
+        r"\d{2}-\d{2}-\d{4}",  # DD-MM-YYYY or MM-DD-YYYY
+        r"\d{1,2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{4}",  # 01 Jan 2026
+        r"\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4}",  # 01-Jan-2026
     ]
 
     def __init__(self, text_document: TextDocument) -> None:
         super().__init__(text_document, self._date_patterns)
-

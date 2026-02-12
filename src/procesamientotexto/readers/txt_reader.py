@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from procesamientotexto.models.text_document import TextDocument
 from procesamientotexto.readers.base import BaseReader
 
@@ -27,4 +28,4 @@ class TXTReader(BaseReader):
             content = path.read_text(encoding="utf-8")
             return TextDocument(content=content, source_path=path)
         except Exception as e:
-            raise IOError(f"Error reading file {path}: {e}")
+            raise OSError(f"Error reading file {path}: {e}") from e

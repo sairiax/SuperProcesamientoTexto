@@ -1,11 +1,12 @@
+from procesamientotexto.models.text_document import TextDocument
+
 from .base import Analyzer
 from .core import (
     FrequencyAnalyzer,
     LanguageDetector,
-    SentimentAnalyzer,
     ReadabilityAnalyzer,
+    SentimentAnalyzer,
 )
-from procesamientotexto.models.text_document import TextDocument
 
 
 class AnalyzerRunner(Analyzer):

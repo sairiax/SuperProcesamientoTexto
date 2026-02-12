@@ -1,8 +1,8 @@
 import sys
-import os
+from pathlib import Path
 
 # Ensure src is in the path
-sys.path.insert(0, os.path.abspath("src"))
+sys.path.insert(0, str(Path("src").resolve()))
 
 from cli import main as cli_main
 

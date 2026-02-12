@@ -1,10 +1,10 @@
 import argparse
+import json
 import sys
 from pathlib import Path
-import json
 
-from procesamientotexto.readers.txt_reader import TXTReader
 from procesamientotexto.analyzers.analyzer_runner import AnalyzerRunner
+from procesamientotexto.readers.txt_reader import TXTReader
 
 
 def main():

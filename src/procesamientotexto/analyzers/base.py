@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
+
 from procesamientotexto.models.text_document import TextDocument
 
 
@@ -11,4 +12,3 @@ class Analyzer(ABC):
         """
         Analyzes the document and returns the result.
         """
-        pass

@@ -1,0 +1,40 @@
+
+---
+
+## 3️⃣ `ejemplo.html` (HTML)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ejemplo HTML para Pruebas</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: navy; }
+        .resaltar { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Bienvenido al ejemplo HTML</h1>
+    <p>Este documento HTML contiene varios elementos que se usan para probar la extracción de texto y limpieza. Incluye párrafos, encabezados, listas y enlaces.</p>
+
+    <h2>Lista de tareas</h2>
+    <ul>
+        <li>Leer párrafos</li>
+        <li>Ignorar contenido de scripts y estilos</li>
+        <li>Extraer texto visible correctamente</li>
+    </ul>
+
+    <h2>Enlaces importantes</h2>
+    <p>Consulta la documentación de <a href="https://www.python.org">Python</a> y revisa recursos de <a href="https://www.w3schools.com/html/">HTML</a>.</p>
+
+    <h2>Bloques especiales</h2>
+    <script>
+        console.log("Este texto no debe aparecer en la extracción");
+    </script>
+    <style>
+        p { color: red; }
+    </style>
+
+    <p>Finalizamos el documento con algunas frases adicionales para asegurar que la extracción detecte todo el contenido relevante y ignore los estilos o scripts.</p>
+</body>
+</html>

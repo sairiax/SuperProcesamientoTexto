@@ -1,0 +1,6 @@
+Bienvenido a nuestro proyecto de procesamiento de texto. Este archivo contiene varias líneas de texto que se usarán para probar la lectura y análisis básico de documentos. Cada línea tiene palabras y frases que deben contarse correctamente.
+
+El procesamiento de texto es una parte fundamental de muchas aplicaciones. Por ejemplo, análisis de sentimientos, búsqueda de información y generación de resúmenes automáticos dependen de la calidad de la lectura y limpieza del texto.
+
+Aquí incluimos nombres, fechas y algunas palabras repetidas para que puedas probar estadísticas básicas como conteo de palabras y frecuencia. Python facilita el trabajo con archivos de texto, y su biblioteca estándar permite manejar codificaciones, leer líneas y normalizar contenido sin instalar dependencias adicionales.
+

@@ -23,6 +23,7 @@ class ReadabilityAnalyzer:
     def __init__(self) -> None:
         """Initializes the ReadabilityAnalyzer by loading thresholds from JSON."""
         self._thresholds: ReadabilityConfig = DataLoader.load_readability_thresholds()
+        logger.debug("Initialized %r", self)
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -109,6 +110,17 @@ class ReadabilityAnalyzer:
         if avg_sentence_len > thresholds.sent_med or avg_word_len > thresholds.word_med:
             return "medium"
         return "low"
+
+    def __repr__(self) -> str:
+        """Return a concise representation for logging/debugging."""
+        thresholds = self._thresholds
+        lang_count = len(getattr(thresholds, "__dict__", {}))
+        default_thresholds = getattr(thresholds, "default", None)
+        return (
+            "ReadabilityAnalyzer("
+            f"languages_available={lang_count}, "
+            f"default_thresholds={default_thresholds})"
+        )
 
     @staticmethod
     def _empty_result() -> dict[str, Any]:

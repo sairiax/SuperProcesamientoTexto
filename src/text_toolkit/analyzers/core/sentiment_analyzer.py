@@ -21,6 +21,7 @@ class SentimentAnalyzer:
         self._pos_words: set[str]
         self._neg_words: set[str]
         self._pos_words, self._neg_words = DataLoader.load_sentiment_words()
+        logger.debug("Initialized %r", self)
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -83,3 +84,11 @@ class SentimentAnalyzer:
             "pos_count": 0,
             "neg_count": 0,
         }
+
+    def __repr__(self) -> str:
+        """Return a concise representation for logging/debugging."""
+        return (
+            "SentimentAnalyzer("
+            f"pos_words_count={len(self._pos_words)}, "
+            f"neg_words_count={len(self._neg_words)})"
+        )

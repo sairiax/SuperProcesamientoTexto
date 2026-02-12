@@ -19,6 +19,7 @@ class LanguageDetector:
     def __init__(self) -> None:
         """Initializes the LanguageDetector by loading stopwords from JSON."""
         self._stopwords: dict[str, set[str]] = DataLoader.load_stopwords()
+        logger.debug("Initialized %r", self)
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -54,3 +55,13 @@ class LanguageDetector:
         result = {"language": best_lang, "confidence": round(confidence, 2)}
         logger.info("Language detection result: %s (confidence: %.2f)", best_lang, confidence)
         return result
+
+    def __repr__(self) -> str:
+        """Return a concise representation for logging/debugging."""
+        languages = sorted(self._stopwords.keys())
+        total_words = sum(len(words) for words in self._stopwords.values())
+        return (
+            "LanguageDetector("
+            f"languages={languages}, "
+            f"total_stopwords={total_words})"
+        )

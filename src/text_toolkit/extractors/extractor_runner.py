@@ -95,11 +95,14 @@ class ExtractorRunner:
             len(date_matches)
         )
 
-        return ExtractionResult(
+        result = ExtractionResult(
             email_matches=email_matches,
             url_matches=url_matches,
             date_matches=date_matches,
         )
+
+        logger.debug("Extraction result: %r", result)
+        return result
 
     def __repr__(self) -> str:
         """Return string representation of the runner."""

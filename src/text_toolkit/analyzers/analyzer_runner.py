@@ -29,6 +29,7 @@ class AnalyzerRunner(Analyzer):
         else:
             self.analyzers = all_analyzers
             logger.info("Initialized AnalyzerRunner with all available analyzers.")
+        logger.debug("Initialized %r", self)
 
     def analyze(self, document: TextDocument) -> dict:
         """Runs all core analyzers and consolidates results."""
@@ -45,3 +46,12 @@ class AnalyzerRunner(Analyzer):
 
         logger.info("Document analysis orchestration complete.")
         return summary
+
+    def __repr__(self) -> str:
+        """Return a concise representation for logging/debugging."""
+        analyzer_names = [analyzer.__class__.__name__ for analyzer in self.analyzers]
+        return (
+            "AnalyzerRunner("
+            f"analyzers={analyzer_names}, "
+            f"count={len(analyzer_names)})"
+        )

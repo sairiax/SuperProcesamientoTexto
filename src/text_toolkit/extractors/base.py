@@ -7,9 +7,21 @@ from typing import Protocol, runtime_checkable
 class Extractor(Protocol):
     """Protocol defining the contract for all extractors."""
 
-    def extract(self, text: str) -> list[str]:
+    def extract(self, text: str, unique_occurrences: bool = False) -> list[str]:
         """
         Extract matches from text.
+
+        Parameters
+        ----------
+        text : str
+            The text to extract patterns from
+        unique_occurrences : bool, optional
+            Whether to remove duplicate matches (default is False)
+
+        Returns
+        -------
+        list[str]
+            List of matched strings
         """
         ...
 
@@ -37,11 +49,27 @@ class RegexExtractor:
             except re.error as exc:
                 raise ValueError(f"Invalid regex pattern: {pattern}") from exc
 
-    def extract(self, text: str) -> list[str]:
+    def extract(self, text: str, unique_occurrences: bool = False) -> list[str]:
         """
         Extract all matches from the input text using all registered patterns.
+
+        Parameters
+        ----------
+        text : str
+            The text to extract patterns from
+        unique_occurrences : bool, optional
+            Whether to remove duplicate matches while preserving order (default is False)
+
+        Returns
+        -------
+        list[str]
+            List of matched strings
         """
         results = []
         for pattern in self._regex_pattern_list:
             results.extend(pattern.findall(text))
+
+        if unique_occurrences:
+            return list(dict.fromkeys(results))
+
         return results

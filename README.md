@@ -6,7 +6,7 @@ A professional suite for advanced linguistic analysis and text processing. Devel
 
 ---
 
-## 🚀 Installation & Usage
+## Installation & Usage
 
 ### Setup
 This project uses `uv` for lightning-fast dependency management.
@@ -18,15 +18,15 @@ uv sync
 Run the toolkit directly from the root using the unified entry point:
 ```bash
 # Basic analysis
-python main.py sample.txt
+uv run main.py sample.txt
 
 # Advanced: Choose analyzers and JSON output
-python main.py sample.txt -a SentimentAnalyzer -o json -v
+uv run main.py sample.txt -a SentimentAnalyzer -o json -v
 ```
 
 ---
 
-## 🏗️ Architecture & Design Decisions
+## Architecture & Design Decisions
 
 ### Clean Architecture (`src/` layout)
 The project follows the standard **src layout** to ensure that tests run against the installed package, preventing accidental imports of local developmental code.
@@ -43,7 +43,7 @@ We use **Pydantic `BaseModel`** to strictly enforce schemas on:
 
 ---
 
-## 🧪 Quality Assurance
+## Quality Assurance
 
 ### Validation Suite
 We maintain a zero-tolerance policy for code smells and type errors:

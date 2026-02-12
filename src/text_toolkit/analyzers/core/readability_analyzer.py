@@ -7,13 +7,12 @@ if TYPE_CHECKING:
 
 from text_toolkit.models.text_document import TextDocument
 
-from ..base import Analyzer
 from .data import DataLoader
 
 logger = logging.getLogger(__name__)
 
 
-class ReadabilityAnalyzer(Analyzer):
+class ReadabilityAnalyzer:
     """
     Analyzer that calculates basic readability metrics.
 

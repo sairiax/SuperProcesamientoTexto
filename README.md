@@ -1,4 +1,4 @@
-# TextToolkit 🛠️
+# TextToolkit
 
 A professional suite for advanced linguistic analysis and text processing. Developed for the *Advanced Python for AI Engineering* module.
 
@@ -53,9 +53,9 @@ We maintain a zero-tolerance policy for code smells and type errors:
 
 Run the suite:
 ```bash
-uv run ruff check src
-uv run pyright src
-uv run pytest --cov=src
+uv run ruff check .
+uv run pyright
+uv run pytest
 ```
 
 ---

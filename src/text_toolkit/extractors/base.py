@@ -1,22 +1,27 @@
 import re
-from abc import ABC
 from re import Pattern
+from typing import Protocol, runtime_checkable
 
-from text_toolkit.models.text_document import TextDocument
+
+@runtime_checkable
+class Extractor(Protocol):
+    """Protocol defining the contract for all extractors."""
+
+    def extract(self, text: str) -> list[str]:
+        """
+        Extract matches from text.
+        """
+        ...
 
 
-class BaseExtractor(ABC):
-    """Base class for all extractors."""
+class RegexExtractor:
+    """Concrete base class for regex-based extractors."""
 
     _regex_pattern_list: list[Pattern[str]]
 
-    def __init__(self, text_document: TextDocument, pattern_list: list[str]) -> None:
+    def __init__(self, pattern_list: list[str]) -> None:
         """
         Initialize extractor with a list of regex patterns.
-
-        :param pattern_list: List of regular expression patterns
-        :type pattern_list: list[str]
-        :raises ValueError: If any pattern is invalid
         """
         self._regex_pattern_list = []
         self.add_patterns(pattern_list)
@@ -24,10 +29,6 @@ class BaseExtractor(ABC):
     def add_patterns(self, patterns: list[str]) -> None:
         """
         Add multiple patterns to the extractor.
-
-        :param patterns: List of regular expression patterns
-        :type patterns: list[str]
-        :raises ValueError: If any pattern is invalid
         """
         for pattern in patterns:
             try:
@@ -39,11 +40,6 @@ class BaseExtractor(ABC):
     def extract(self, text: str) -> list[str]:
         """
         Extract all matches from the input text using all registered patterns.
-
-        :param text: Input text to scan
-        :type text: str
-        :return: List of all matches
-        :rtype: List[str]
         """
         results = []
         for pattern in self._regex_pattern_list:

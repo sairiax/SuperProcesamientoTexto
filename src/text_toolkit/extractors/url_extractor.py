@@ -1,10 +1,9 @@
 from typing import ClassVar
 
-from text_toolkit.extractors.base import BaseExtractor
-from text_toolkit.models.text_document import TextDocument
+from text_toolkit.extractors.base import RegexExtractor
 
 
-class URLExtractor(BaseExtractor):
+class URLExtractor(RegexExtractor):
     """Extractor for URLs
 
     This class support URLs with different protocols:
@@ -21,5 +20,5 @@ class URLExtractor(BaseExtractor):
         r"www\.(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # www URLs without protocol
     ]
 
-    def __init__(self, text_document: TextDocument) -> None:
-        super().__init__(text_document, self._url_patterns)
+    def __init__(self) -> None:
+        super().__init__(self._url_patterns)

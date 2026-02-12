@@ -4,13 +4,11 @@ from typing import Any
 
 from text_toolkit.models.text_document import TextDocument
 
-from ..base import Analyzer
-
 # Use the package-level logger hierarchy
 logger = logging.getLogger(__name__)
 
 
-class FrequencyAnalyzer(Analyzer):
+class FrequencyAnalyzer:
     """
     Analyzer that calculates word frequencies and token statistics.
 

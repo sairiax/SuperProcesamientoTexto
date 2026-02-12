@@ -1,10 +1,9 @@
 from pathlib import Path
 
 from text_toolkit.models.text_document import TextDocument
-from text_toolkit.readers.base import BaseReader
 
 
-class TXTReader(BaseReader):
+class TXTReader:
     """Refined reader for text files."""
 
     def read(self, path: Path) -> TextDocument:

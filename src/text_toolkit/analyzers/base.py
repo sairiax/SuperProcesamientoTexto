@@ -1,14 +1,14 @@
-from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from text_toolkit.models.text_document import TextDocument
 
 
-class Analyzer(ABC):
-    """Base class for all analyzers."""
+@runtime_checkable
+class Analyzer(Protocol):
+    """Protocol defining the contract for all analyzers."""
 
-    @abstractmethod
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
         Analyzes the document and returns the result.
         """
+        ...

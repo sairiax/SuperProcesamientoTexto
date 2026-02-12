@@ -3,13 +3,12 @@ from typing import Any
 
 from text_toolkit.models.text_document import TextDocument
 
-from ..base import Analyzer
 from .data import DataLoader
 
 logger = logging.getLogger(__name__)
 
 
-class SentimentAnalyzer(Analyzer):
+class SentimentAnalyzer:
     """
     Analyzer that estimates sentiment polarity using keyword heuristics.
 

@@ -88,7 +88,7 @@ class SentimentAnalyzer(Analyzer):
         }
         return result
 
-    def _get_label(score: float) -> str:
+    def _get_label(self, score: float) -> str:
         if score > 0.1:
             return "positive"
         elif score < -0.1:

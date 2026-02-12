@@ -6,8 +6,6 @@ from .core import (
     ReadabilityAnalyzer,
 )
 from procesamientotexto.models.text_document import TextDocument
-import inspect
-import sys
 
 
 class AnalyzerRunner(Analyzer):
@@ -23,12 +21,11 @@ class AnalyzerRunner(Analyzer):
 
     def analyze(self, document: TextDocument) -> dict:
         """Runs all core analyzers and consolidates results."""
-        for analyzer in self.analyzers:
-            result = analyzer.analyze(document)
-
-        freq_results = document.get_analysis("frequency_analyzer")
-
-        # Consolidate results into a single summary
         summary = {}
+
+        for analyzer in self.analyzers:
+            # Run the analyzer and merge results directly
+            result = analyzer.analyze(document)
+            summary.update(result)
 
         return summary

@@ -1,13 +1,13 @@
 import pytest
 
-from procesamientotexto.analyzers import AnalyzerRunner
-from procesamientotexto.analyzers.core import (
+from text_toolkit.analyzers import AnalyzerRunner
+from text_toolkit.analyzers.core import (
     FrequencyAnalyzer,
     LanguageDetector,
     ReadabilityAnalyzer,
     SentimentAnalyzer,
 )
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.models.text_document import TextDocument
 
 
 @pytest.fixture

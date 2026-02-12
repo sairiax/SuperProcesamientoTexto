@@ -1,7 +1,7 @@
 """Tests for AnalyzerRunner."""
 
-from procesamientotexto.analyzers.analyzer_runner import AnalyzerRunner
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.analyzers.analyzer_runner import AnalyzerRunner
+from text_toolkit.models.text_document import TextDocument
 
 
 class TestAnalyzerRunner:
@@ -167,7 +167,7 @@ class TestAnalyzerRunner:
 
         assert len(runner.analyzers) == 4
         # Verify all analyzer types are present
-        from procesamientotexto.analyzers.core import (
+        from text_toolkit.analyzers.core import (
             FrequencyAnalyzer,
             LanguageDetector,
             ReadabilityAnalyzer,

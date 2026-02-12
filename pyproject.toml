@@ -1,7 +1,7 @@
 [project]
-name = "superprocesamientotexto"
+name = "text-toolkit"
 version = "0.1.0"
-description = "Add your description here"
+description = "A professional toolkit for advanced text processing and analysis."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

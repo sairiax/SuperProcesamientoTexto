@@ -1,4 +1,4 @@
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.models.text_document import TextDocument
 
 from .base import Analyzer
 from .core import (
@@ -12,13 +12,17 @@ from .core import (
 class AnalyzerRunner(Analyzer):
     """Calculates document statistics by orchestrating all core analyzers."""
 
-    def __init__(self):
-        self.analyzers = [
+    def __init__(self, analyzer_names: list[str] | None = None):
+        all_analyzers: list[Analyzer] = [
             FrequencyAnalyzer(),
             LanguageDetector(),
             SentimentAnalyzer(),
             ReadabilityAnalyzer(),
         ]
+        if analyzer_names:
+            self.analyzers = [a for a in all_analyzers if a.__class__.__name__ in analyzer_names]
+        else:
+            self.analyzers = all_analyzers
 
     def analyze(self, document: TextDocument) -> dict:
         """Runs all core analyzers and consolidates results."""

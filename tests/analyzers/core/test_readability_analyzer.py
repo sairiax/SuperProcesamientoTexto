@@ -1,7 +1,7 @@
 """Tests for ReadabilityAnalyzer."""
 
-from procesamientotexto.analyzers.core import ReadabilityAnalyzer
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.analyzers.core import ReadabilityAnalyzer
+from text_toolkit.models.text_document import TextDocument
 
 
 class TestReadabilityAnalyzer:
@@ -82,7 +82,7 @@ class TestReadabilityAnalyzer:
         analyzer = ReadabilityAnalyzer()
 
         # First, we need language detection to set the language
-        from procesamientotexto.analyzers.core import LanguageDetector
+        from text_toolkit.analyzers.core import LanguageDetector
 
         lang_detector = LanguageDetector()
         lang_detector.analyze(doc)
@@ -100,7 +100,7 @@ class TestReadabilityAnalyzer:
         analyzer = ReadabilityAnalyzer()
 
         # First detect language
-        from procesamientotexto.analyzers.core import LanguageDetector
+        from text_toolkit.analyzers.core import LanguageDetector
 
         lang_detector = LanguageDetector()
         lang_detector.analyze(doc)

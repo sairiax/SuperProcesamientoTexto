@@ -1,7 +1,7 @@
 import re
 from typing import Any
 
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.models.text_document import TextDocument
 
 from ..base import Analyzer
 from .data import DataLoader

@@ -2,7 +2,7 @@ import re
 from abc import ABC
 from re import Pattern
 
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.models.text_document import TextDocument
 
 
 class BaseExtractor(ABC):

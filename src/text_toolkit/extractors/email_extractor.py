@@ -1,7 +1,7 @@
 from typing import ClassVar
 
-from procesamientotexto.extractors.base import BaseExtractor
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.extractors.base import BaseExtractor
+from text_toolkit.models.text_document import TextDocument
 
 
 class EmailExtractor(BaseExtractor):

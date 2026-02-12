@@ -1,7 +1,7 @@
 """Tests for FrequencyAnalyzer."""
 
-from procesamientotexto.analyzers.core import FrequencyAnalyzer
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.analyzers.core import FrequencyAnalyzer
+from text_toolkit.models.text_document import TextDocument
 
 
 class TestFrequencyAnalyzer:

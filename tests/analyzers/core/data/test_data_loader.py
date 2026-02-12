@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from procesamientotexto.analyzers.core.data import DataLoader, DataLoadError
+from text_toolkit.analyzers.core.data import DataLoader, DataLoadError
 
 
 class TestDataLoader:
@@ -14,8 +14,8 @@ class TestDataLoader:
         path = DataLoader.get_data_path("test.json")
         assert isinstance(path, Path)
         assert path.name == "test.json"
-        # Directory should be src/procesamientotexto/analyzers/core/data/
-        assert "procesamientotexto/analyzers/core/data" in str(path).replace("\\", "/")
+        # Directory should be src/text_toolkit/analyzers/core/data/
+        assert "text_toolkit/analyzers/core/data" in str(path).replace("\\", "/")
 
     def test_load_stopwords_real_data(self):
         """Integration test: Verify that real stopwords can be loaded."""
@@ -56,7 +56,7 @@ class TestDataLoader:
 
         with (
             patch(
-                "procesamientotexto.analyzers.core.data.DataLoader.get_data_path",
+                "text_toolkit.analyzers.core.data.DataLoader.get_data_path",
                 return_value=bad_file,
             ),
             pytest.raises(DataLoadError, match="Malformed JSON"),

@@ -2,7 +2,7 @@
 
 import pytest
 
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.models.text_document import TextDocument
 
 
 @pytest.fixture

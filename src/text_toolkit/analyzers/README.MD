@@ -50,8 +50,8 @@ The `AnalyzerRunner` implements the **Composite** pattern. It allows you to run 
 
 ### Using the Orchestrator (Recommended)
 ```python
-from procesamientotexto.models.text_document import TextDocument
-from procesamientotexto.analyzers import AnalyzerRunner
+from text_toolkit.models.text_document import TextDocument
+from text_toolkit.analyzers import AnalyzerRunner
 
 doc = TextDocument(content="I love this toolkit. It is amazing!")
 runner = AnalyzerRunner()
@@ -64,8 +64,8 @@ print(result["total_words"]) # 7
 
 ### Using an Individual Analyzer
 ```python
-from procesamientotexto.models.text_document import TextDocument
-from procesamientotexto.analyzers.core import LanguageDetector
+from text_toolkit.models.text_document import TextDocument
+from text_toolkit.analyzers.core import LanguageDetector
 
 doc = TextDocument(content="Hola, ¿cómo estás?")
 detector = LanguageDetector()

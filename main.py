@@ -4,7 +4,7 @@ from pathlib import Path
 # Ensure src is in the path
 sys.path.insert(0, str(Path("src").resolve()))
 
-from cli import main as cli_main
+from text_toolkit.cli import main as cli_main
 
 
 def main():

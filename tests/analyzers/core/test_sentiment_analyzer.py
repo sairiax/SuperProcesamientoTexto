@@ -1,7 +1,7 @@
 """Tests for SentimentAnalyzer."""
 
-from procesamientotexto.analyzers.core import SentimentAnalyzer
-from procesamientotexto.models.text_document import TextDocument
+from text_toolkit.analyzers.core import SentimentAnalyzer
+from text_toolkit.models.text_document import TextDocument
 
 
 class TestSentimentAnalyzer:

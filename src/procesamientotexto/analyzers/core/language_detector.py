@@ -16,7 +16,7 @@ class LanguageDetector(Analyzer):
 
     def __init__(self) -> None:
         """Initializes the LanguageDetector by loading stopwords from JSON."""
-        self._stopwords = DataLoader.load_stopwords()
+        self._stopwords: dict[str, set[str]] = DataLoader.load_stopwords()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
@@ -37,12 +37,12 @@ class LanguageDetector(Analyzer):
             result = {"language": "unknown", "confidence": 0.0}
             return result
 
-        scores = {}
+        scores: dict[str, float] = {}
         for lang, words_list in self._stopwords.items():
             intersection = words.intersection(words_list)
             scores[lang] = len(intersection) / len(words_list) if words_list else 0.0
 
-        best_lang = max(scores, key=scores.get)
+        best_lang = max(scores, key=lambda lang_code: scores[lang_code])
         confidence = scores[best_lang]
 
         # If no stopwords matched at all

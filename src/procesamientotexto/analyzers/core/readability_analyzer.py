@@ -17,7 +17,7 @@ class ReadabilityAnalyzer(Analyzer):
 
     def __init__(self) -> None:
         """Initializes the ReadabilityAnalyzer by loading thresholds from JSON."""
-        self._thresholds = DataLoader.load_readability_thresholds()
+        self._thresholds: dict[str, dict[str, float]] = DataLoader.load_readability_thresholds()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """

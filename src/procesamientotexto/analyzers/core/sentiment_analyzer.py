@@ -16,6 +16,8 @@ class SentimentAnalyzer(Analyzer):
 
     def __init__(self) -> None:
         """Initializes the SentimentAnalyzer by loading keywords from JSON."""
+        self._pos_words: set[str]
+        self._neg_words: set[str]
         self._pos_words, self._neg_words = DataLoader.load_sentiment_words()
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:

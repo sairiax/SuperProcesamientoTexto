@@ -1,6 +1,7 @@
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 
 @dataclass()
@@ -36,8 +37,8 @@ class TextDocument:
 
     content: str
     source_path: Path | None = None
-    metadata: dict = field(default_factory=dict)
-    analysis_results: dict = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
+    analysis_results: dict[str, Any] = field(default_factory=dict)
     _tokens: list[str] | None = field(default=None, init=False)
 
     @property
@@ -49,10 +50,10 @@ class TextDocument:
             self._tokens = re.findall(r"\w+", self.content.lower())
         return self._tokens
 
-    def add_analysis(self, key: str, result) -> None:
+    def add_analysis(self, key: str, result: Any) -> None:
         self.analysis_results[key] = result
 
-    def get_analysis(self, key: str):
+    def get_analysis(self, key: str) -> Any:
         return self.analysis_results.get(key)
 
     def has_analysis(self, key: str) -> bool:

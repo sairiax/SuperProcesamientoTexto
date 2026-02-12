@@ -8,7 +8,6 @@ class DataLoadError(Exception):
     """Custom exception for data loading failures."""
 
 
-
 class DataLoader:
     """Utility for robust and professional data loading from JSON files."""
 
@@ -22,8 +21,8 @@ class DataLoader:
         Returns:
             Path: Absolute path to the file.
         """
-        # Data directory is relative to this file
-        data_dir = Path(__file__).parent / "data"
+        # Data directory is the directory containing this file
+        data_dir = Path(__file__).parent
         return data_dir / filename
 
     @classmethod

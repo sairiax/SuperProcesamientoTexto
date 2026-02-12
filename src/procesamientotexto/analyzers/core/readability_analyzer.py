@@ -4,7 +4,7 @@ from typing import Any
 from procesamientotexto.models.text_document import TextDocument
 
 from ..base import Analyzer
-from ._data_loader import DataLoader
+from .data import DataLoader
 
 
 class ReadabilityAnalyzer(Analyzer):

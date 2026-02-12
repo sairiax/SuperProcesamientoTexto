@@ -24,6 +24,8 @@ class DateExtractor(RegexExtractor):
         r"\d{2}-\d{2}-\d{4}",  # DD-MM-YYYY or MM-DD-YYYY
         r"\d{1,2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s\d{4}",  # 01 Jan 2026
         r"\d{1,2}-(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4}",  # 01-Jan-2026
+        r"\d{1,2}\s(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s\d{4}",  # 01 jan 2026
+        r"\d{1,2}-(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)-\d{4}",  # 01-jan-2026
     ]
 
     def __init__(self) -> None:

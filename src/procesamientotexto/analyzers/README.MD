@@ -1,6 +1,6 @@
 
 src/procesamientotexto/analyzers/
-├── statistics.py       # Orchestrator (summary report)
+├── AnalyzerRunner.py       # Orchestrator (summary report)
 └── core/
     ├── base.py         # Abstract Base Class
     ├── word_counter.py # Basic word/frequency counts

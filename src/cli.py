@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 
 from procesamientotexto.readers.txt_reader import TXTReader
-from procesamientotexto.analyzers.statistics import Statistics
+from procesamientotexto.analyzers.analyzer import AnalyzerRunner
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
         doc = reader.read(file_path)
 
         # Analyze
-        stats_analyzer = Statistics()
+        stats_analyzer = AnalyzerRunner()
         results = stats_analyzer.analyze(doc)
 
         # Output results

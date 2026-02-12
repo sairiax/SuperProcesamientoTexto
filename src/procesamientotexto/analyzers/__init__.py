@@ -1,3 +1,3 @@
-from .statistics import Statistics
+from .analyzer_runner import AnalyzerRunner
 
-__all__ = ["Statistics"]
+__all__ = ["AnalyzerRunner"]

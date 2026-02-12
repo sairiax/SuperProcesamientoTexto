@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from procesamientotexto.analyzers.core.base import Analyzer
+from ..base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
 
 

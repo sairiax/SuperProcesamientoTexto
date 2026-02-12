@@ -11,7 +11,7 @@ from procesamientotexto.analyzers.core import (
     SentimentAnalyzer,
     ReadabilityAnalyzer,
 )
-from procesamientotexto.analyzers import Statistics
+from procesamientotexto.analyzers import AnalyzerRunner
 
 
 def run_tests():
@@ -52,10 +52,10 @@ def run_tests():
     print(f"ReadabilityAnalyzer: Avg word length {ra_res['avg_word_length']}.")
     assert ra_res["avg_word_length"] > 0
 
-    # 6. Statistics (Orchestrator)
-    stats = Statistics()
+    # 6. AnalyzerRunner (Orchestrator)
+    stats = AnalyzerRunner()
     stats_res = stats.analyze(doc)
-    print("Statistics: Summary consolidated successfully.")
+    print("AnalyzerRunner: Summary consolidated successfully.")
     assert "word_stats" in stats_res
     assert "sentiment" in stats_res
     assert stats_res["total_chars"] == len(en_content)

@@ -2,13 +2,13 @@ from collections import Counter
 
 from typing import Any
 
-from .base import Analyzer
+from ..base import Analyzer
 from procesamientotexto.models.text_document import TextDocument
 
 
 class FrequencyAnalyzer(Analyzer):
     """
-    Analyzer that calculates word frequencies and token statistics.
+    Analyzer that calculates word frequencies and token AnalyzerRunner.
 
     This analyzer counts the occurrences of each word, the total number of words,
     and determines the most common token length.
@@ -16,7 +16,7 @@ class FrequencyAnalyzer(Analyzer):
 
     def analyze(self, document: TextDocument) -> dict[str, Any]:
         """
-        Analyzes the document to extract frequency statistics.
+        Analyzes the document to extract frequency AnalyzerRunner.
 
         Args:
             document (TextDocument): The document to analyze.

@@ -82,6 +82,16 @@ class CustomExtractor(RegexExtractor):
         self._extractor.add_patterns(patterns)
         logger.debug("Total patterns in CustomExtractor '%s': %d", self.name, len(self._extractor._regex_pattern_list))
 
+    @property
+    def pattern_count(self) -> int:
+        """Return the number of registered regex patterns."""
+        return len(self._extractor._regex_pattern_list)
+
+    @property
+    def patterns(self) -> list[str]:
+        """Return the registered regex patterns as strings."""
+        return [item.pattern for item in self._extractor._regex_pattern_list]
+
     def __repr__(self) -> str:
         """Return string representation of the extractor."""
         pattern_list = [item.pattern for item in self._extractor._regex_pattern_list]

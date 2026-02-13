@@ -130,6 +130,7 @@ pythonVersion = "3.11"
 typeCheckingMode = "basic"
 venvPath = "."
 venv = ".venv"
+reportInvalidStringEscapeSequence = false
 
 # Paths
 include = ["src", "tests"]

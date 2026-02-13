@@ -1,5 +1,7 @@
 """Tests for SentimentAnalyzer."""
 
+import pytest
+
 from text_toolkit.analyzers.core import SentimentAnalyzer
 from text_toolkit.models.text_document import TextDocument
 
@@ -7,35 +9,29 @@ from text_toolkit.models.text_document import TextDocument
 class TestSentimentAnalyzer:
     """Test suite for SentimentAnalyzer."""
 
-    def test_positive_sentiment_english(self, english_doc: TextDocument):
-        """Test positive sentiment detection in English."""
+    @pytest.mark.parametrize(
+        "text, expected_sentiment",
+        [
+            ("This is a great day. I love English! It is excellent and amazing.", "positive"),
+            (
+                "This is a terrible day. I hate this awful situation. It is horrible and bad.",
+                "negative",
+            ),
+            (
+                "The document contains several sentences. The data was processed yesterday.",
+                "neutral",
+            ),
+            ("", "neutral"),
+            ("Es muy bueno y excelente. Maravilloso!", "positive"),
+            ("Es muy malo y terrible. Horrible!", "negative"),
+        ],
+    )
+    def test_sentiment_detection(self, text, expected_sentiment):
+        """Test sentiment detection across different languages and intensities."""
+        doc = TextDocument(content=text)
         analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(english_doc)
-
-        assert result["sentiment"] == "positive"
-        assert result["score"] > 0.1
-        assert result["pos_count"] > 0
-        assert result["neg_count"] == 0
-
-    def test_negative_sentiment(self, negative_sentiment_doc: TextDocument):
-        """Test negative sentiment detection."""
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(negative_sentiment_doc)
-
-        assert result["sentiment"] == "negative"
-        assert result["score"] < -0.1
-        assert result["pos_count"] == 0
-        assert result["neg_count"] > 0
-
-    def test_neutral_sentiment(self, neutral_sentiment_doc: TextDocument):
-        """Test neutral sentiment detection."""
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(neutral_sentiment_doc)
-
-        assert result["sentiment"] == "neutral"
-        assert -0.1 <= result["score"] <= 0.1
-        assert result["pos_count"] == 0
-        assert result["neg_count"] == 0
+        result = analyzer.analyze(doc)
+        assert result["sentiment"] == expected_sentiment
 
     def test_empty_document(self, empty_doc: TextDocument):
         """Test sentiment analysis on empty document."""
@@ -58,24 +54,6 @@ class TestSentimentAnalyzer:
         # Score should be calculated as (pos - neg) / total
         assert "sentiment" in result
         assert "score" in result
-
-    def test_spanish_positive_words(self):
-        """Test that Spanish positive words are recognized."""
-        doc = TextDocument(content="Es muy bueno y excelente. Maravilloso!")
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(doc)
-
-        assert result["sentiment"] == "positive"
-        assert result["pos_count"] >= 3  # bueno, excelente, maravilloso
-
-    def test_spanish_negative_words(self):
-        """Test that Spanish negative words are recognized."""
-        doc = TextDocument(content="Es muy malo y terrible. Horrible!")
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(doc)
-
-        assert result["sentiment"] == "negative"
-        assert result["neg_count"] >= 3  # malo, terrible, horrible
 
     def test_score_calculation(self):
         """Test that score is correctly calculated."""

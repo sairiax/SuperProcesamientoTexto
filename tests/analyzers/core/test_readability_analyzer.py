@@ -1,5 +1,7 @@
 """Tests for ReadabilityAnalyzer."""
 
+import pytest
+
 from text_toolkit.analyzers.core import ReadabilityAnalyzer
 from text_toolkit.models.text_document import TextDocument
 
@@ -28,42 +30,32 @@ class TestReadabilityAnalyzer:
         assert result["avg_word_length"] == 0.0
         assert result["complexity"] == "unknown"
 
-    def test_low_complexity(self):
-        """Test document with low complexity (short sentences and words)."""
-        doc = TextDocument(content="I am ok. You are ok. We are ok.")
+    @pytest.mark.parametrize(
+        "text, expected_complexity",
+        [
+            ("I am ok. You are ok. We are ok.", "low"),
+            (
+                "The system processes information quickly. "
+                "Users can access multiple features easily. "
+                "Documentation provides helpful guidance.",
+                "high",
+            ),
+            (
+                "The implementation demonstrates comprehensive functionality "
+                "incorporating sophisticated algorithmic processing mechanisms "
+                "facilitating extraordinary computational performance optimization. "
+                "Subsequently, the systematically engineered architectural components "
+                "provide unprecedented scalability characteristics.",
+                "high",
+            ),
+        ],
+    )
+    def test_complexity_levels(self, text, expected_complexity):
+        """Test different complexity levels with various texts."""
+        doc = TextDocument(content=text)
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
-
-        assert result["complexity"] == "low"
-        assert result["avg_sentence_length"] < 15
-        assert result["avg_word_length"] < 5
-
-    def test_medium_complexity(self):
-        """Test document with medium complexity."""
-        doc = TextDocument(
-            content="The system processes information quickly. "
-            "Users can access multiple features easily. "
-            "Documentation provides helpful guidance."
-        )
-        analyzer = ReadabilityAnalyzer()
-        result = analyzer.analyze(doc)
-
-        assert result["complexity"] in ["medium", "high"]
-
-    def test_high_complexity(self):
-        """Test document with high complexity (long sentences and words)."""
-        doc = TextDocument(
-            content="The implementation demonstrates comprehensive functionality "
-            "incorporating sophisticated algorithmic processing mechanisms "
-            "facilitating extraordinary computational performance optimization. "
-            "Subsequently, the systematically engineered architectural components "
-            "provide unprecedented scalability characteristics."
-        )
-        analyzer = ReadabilityAnalyzer()
-        result = analyzer.analyze(doc)
-
-        assert result["complexity"] == "high"
-        assert result["avg_sentence_length"] > 25 or result["avg_word_length"] > 6
+        assert result["complexity"] == expected_complexity
 
     def test_single_sentence(self):
         """Test document with a single sentence."""

@@ -20,6 +20,16 @@ def test_read_txt_correctly(tmp_path: Path):
     assert lines[2] == "Línea final."
 
 
+def test_txt_file_not_found(tmp_path: Path):
+    """Raise FileNotFoundError if input file doesn't exist."""
+
+    file_path = tmp_path / "nonexistent.txt"
+
+    with pytest.raises(FileNotFoundError):
+        reader = TxtReader()
+        list(reader.read(file_path))
+
+
 def test_read_mkd_correctly(tmp_path: Path):
     file_path = tmp_path / "markdown_sample.md"
 
@@ -43,6 +53,16 @@ def test_read_mkd_correctly(tmp_path: Path):
     assert lines[-1] == "[Enlace](https://example.com)"
 
 
+def test_mkd_file_not_found(tmp_path: Path):
+    """Raise FileNotFoundError if input file doesn't exist."""
+
+    file_path = tmp_path / "nonexistent.md"
+
+    with pytest.raises(FileNotFoundError):
+        reader = TxtReader()
+        list(reader.read(file_path))
+
+
 def test_read_html_correctly(tmp_path: Path):
     file_path = tmp_path / "html_sample.html"
 
@@ -63,6 +83,16 @@ def test_read_html_correctly(tmp_path: Path):
     assert lines[0] == "Título HTML"
     assert lines[1] == "Hola"
     assert lines[2] == "mundo"
+
+
+def test_html_file_not_found(tmp_path: Path):
+    """Raise FileNotFoundError if input file doesn't exist."""
+
+    file_path = tmp_path / "nonexistent.html"
+
+    with pytest.raises(FileNotFoundError):
+        reader = TxtReader()
+        list(reader.read(file_path))
 
 
 if __name__ == "__main__":

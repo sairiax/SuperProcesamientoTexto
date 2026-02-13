@@ -50,16 +50,16 @@ class TestReadabilityAnalyzer:
             ),
         ],
     )
-    def test_complexity_levels(self, text, expected_complexity):
+    def test_complexity_levels(self, text, expected_complexity, pipeline):
         """Test different complexity levels with various texts."""
-        doc = TextDocument(content=text)
+        doc = TextDocument(content=text, pipeline=pipeline)
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
         assert result["complexity"] == expected_complexity
 
-    def test_single_sentence(self):
+    def test_single_sentence(self, pipeline):
         """Test document with a single sentence."""
-        doc = TextDocument(content="This is a single sentence.")
+        doc = TextDocument(content="This is a single sentence.", pipeline=pipeline)
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
 
@@ -67,10 +67,13 @@ class TestReadabilityAnalyzer:
         assert result["avg_word_length"] > 0
         assert result["complexity"] in ["low", "medium", "high", "unknown"]
 
-    def test_english_thresholds(self):
+    def test_english_thresholds(self, pipeline):
         """Test that English language thresholds are used."""
         # Create an English document that is clearly detected as English
-        doc = TextDocument(content="The quick brown fox jumps over the lazy dog every day.")
+        doc = TextDocument(
+            content="The quick brown fox jumps over the lazy dog every day.",
+            pipeline=pipeline,
+        )
         analyzer = ReadabilityAnalyzer()
 
         # First, we need language detection to set the language
@@ -84,10 +87,11 @@ class TestReadabilityAnalyzer:
         assert "complexity" in result
         # English thresholds: sent_high=25, sent_med=15, word_high=6.0, word_med=5.0
 
-    def test_spanish_thresholds(self):
+    def test_spanish_thresholds(self, pipeline):
         """Test that Spanish language thresholds are used."""
         doc = TextDocument(
-            content="El rápido zorro marrón salta sobre el perro perezoso todos los días."
+            content="El rápido zorro marrón salta sobre el perro perezoso todos los días.",
+            pipeline=pipeline,
         )
         analyzer = ReadabilityAnalyzer()
 
@@ -102,20 +106,23 @@ class TestReadabilityAnalyzer:
         assert "complexity" in result
         # Spanish thresholds: sent_high=30, sent_med=20, word_high=6.5, word_med=5.5
 
-    def test_avg_sentence_length_calculation(self):
+    def test_avg_sentence_length_calculation(self, pipeline):
         """Test that average sentence length is correctly calculated."""
         # 3 sentences with 3, 4, and 5 words respectively = 12 words / 3 sentences = 4
-        doc = TextDocument(content="I am ok. You are fine now. We all are very good.")
+        doc = TextDocument(
+            content="I am ok. You are fine now. We all are very good.",
+            pipeline=pipeline,
+        )
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
 
         # Should be 12 words / 3 sentences = 4.0
         assert result["avg_sentence_length"] == 4.0
 
-    def test_avg_word_length_calculation(self):
+    def test_avg_word_length_calculation(self, pipeline):
         """Test that average word length is correctly calculated."""
         # Words: "cat" (3), "dog" (3), "fish" (4) = total 10 chars / 3 words = 3.33
-        doc = TextDocument(content="cat dog fish")
+        doc = TextDocument(content="cat dog fish", pipeline=pipeline)
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
 
@@ -131,19 +138,19 @@ class TestReadabilityAnalyzer:
         assert result["avg_word_length"] > 0
         assert result["complexity"] in ["low", "medium", "high"]
 
-    def test_multiple_punctuation(self):
+    def test_multiple_punctuation(self, pipeline):
         """Test that multiple punctuation marks are handled correctly."""
-        doc = TextDocument(content="Hello!!! Are you okay??? Yes!")
+        doc = TextDocument(content="Hello!!! Are you okay??? Yes!", pipeline=pipeline)
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
 
         # Should have 3 sentences
         assert result["avg_sentence_length"] > 0
 
-    def test_no_language_detected(self):
+    def test_no_language_detected(self, pipeline):
         """Test readability when no language is detected."""
         # Document with no recognizable stopwords
-        doc = TextDocument(content="xyzabc qwerty zxcvbn asdfgh")
+        doc = TextDocument(content="xyzabc qwerty zxcvbn asdfgh", pipeline=pipeline)
         analyzer = ReadabilityAnalyzer()
         result = analyzer.analyze(doc)
 

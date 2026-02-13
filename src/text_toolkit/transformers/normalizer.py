@@ -1,6 +1,6 @@
 import logging
-import unicodedata
 import re
+import unicodedata
 
 
 class Normalizer:

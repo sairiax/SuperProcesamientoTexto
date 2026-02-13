@@ -28,7 +28,9 @@ class ExtractorRunner:
     >>> from text_toolkit.extractors import ExtractorRunner
     >>> from text_toolkit.models.text_document import TextDocument
     >>> runner = ExtractorRunner()
-    >>> doc = TextDocument(content="Contact: admin@example.com, visit https://example.com on 2026-03-15")
+    >>> doc = TextDocument(
+    ...     content="Contact: admin@example.com, visit https://example.com on 2026-03-15"
+    ... )
     >>> result = runner.extract_all(doc)
     >>> result.email_matches
     ['admin@example.com']
@@ -92,7 +94,7 @@ class ExtractorRunner:
             "Extraction completed: %d emails, %d URLs, %d dates",
             len(email_matches),
             len(url_matches),
-            len(date_matches)
+            len(date_matches),
         )
 
         result = ExtractionResult(

@@ -50,8 +50,4 @@ class AnalyzerRunner(Analyzer):
     def __repr__(self) -> str:
         """Return a concise representation for logging/debugging."""
         analyzer_names = [analyzer.__class__.__name__ for analyzer in self.analyzers]
-        return (
-            "AnalyzerRunner("
-            f"analyzers={analyzer_names}, "
-            f"count={len(analyzer_names)})"
-        )
+        return f"AnalyzerRunner(analyzers={analyzer_names}, count={len(analyzer_names)})"

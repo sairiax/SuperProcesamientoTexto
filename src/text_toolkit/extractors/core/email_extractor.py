@@ -13,6 +13,7 @@ class EmailExtractor(RegexExtractor):
     and usern.name+tag@domain.co.uk by default.
 
     """
+
     name: ClassVar[str] = "EmailExtractor"
     _email_patterns: ClassVar[list[str]] = [
         r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",  # Standard email

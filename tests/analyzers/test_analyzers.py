@@ -8,16 +8,33 @@ from text_toolkit.analyzers.core import (
     SentimentAnalyzer,
 )
 from text_toolkit.models.text_document import TextDocument
+from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer, TransformerPipeline
 
 
 @pytest.fixture
-def english_doc() -> TextDocument:
-    return TextDocument(content="This is a great day. I love English! It is excellent.")
+def pipeline() -> TransformerPipeline:
+    """Standard pipeline for testing."""
+    return TransformerPipeline(
+        tokenizer=Tokenizer(),
+        cleaner=Cleaner(),
+        normalizer=Normalizer(),
+    )
 
 
 @pytest.fixture
-def spanish_doc() -> TextDocument:
-    return TextDocument(content="Este es un día excelente. Me encanta el español! Es maravilloso.")
+def english_doc(pipeline: TransformerPipeline) -> TextDocument:
+    return TextDocument(
+        content="This is a great day. I love English! It is excellent.",
+        pipeline=pipeline,
+    )
+
+
+@pytest.fixture
+def spanish_doc(pipeline: TransformerPipeline) -> TextDocument:
+    return TextDocument(
+        content="Este es un día excelente. Me encanta el español! Es maravilloso.",
+        pipeline=pipeline,
+    )
 
 
 def test_frequency_analyzer(english_doc: TextDocument):

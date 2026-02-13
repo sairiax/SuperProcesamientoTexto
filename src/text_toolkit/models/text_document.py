@@ -1,41 +1,19 @@
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from text_toolkit.transformers import TransformerPipeline
 
 
 @dataclass()
 class TextDocument:
     """
     Represents a document with its content, associated metadata and analysis results.
-
-    Attributes
-    ----------
-    content : str
-        Raw, unmodified text of the document.
-    source_path : Path | None
-        Original file path.
-    metadata : dict
-        Reader- or transformer-provided metadata (format, structure hints, etc.).
-    analysis_results : dict
-        Results produced by analyzers, keyed by analyzer identifier.
-
-    Example
-    -------
-    >>> from pathlib import Path
-    >>> from textkit.models.text_document import TextDocument
-    >>> doc = TextDocument(content="Hello world!", source_path=Path("example.txt"))
-    >>> doc.metadata["language"] = "en"
-    >>> doc.add_analysis("word_count", 2)
-    >>> doc.get_analysis("word_count")
-    2
-    >>> doc.is_empty()
-    False
-    >>> doc.has_analysis("word_count")
-    True
     """
 
     content: str
+    pipeline: "TransformerPipeline"
     source_path: Path | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
     analysis_results: dict[str, Any] = field(default_factory=dict)
@@ -43,11 +21,9 @@ class TextDocument:
 
     @property
     def tokens(self) -> list[str]:
-        """Lazy loads and returns the list of tokens (words)."""
+        """Lazy loads and returns the list of tokens (words) using the pipeline."""
         if self._tokens is None:
-            # Simple tokenization: word characters only, lowercase
-            # TODO: Integrate with a more robust tokenizer of package transformers/
-            self._tokens = re.findall(r"\w+", self.content.lower())
+            self._tokens = self.pipeline.transform(self.content)
         return self._tokens
 
     def add_analysis(self, key: str, result: Any) -> None:

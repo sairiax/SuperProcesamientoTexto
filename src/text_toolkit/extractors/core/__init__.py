@@ -4,8 +4,8 @@ from .email_extractor import EmailExtractor
 from .url_extractor import URLExtractor
 
 __all__ = [
-  "DateExtractor",
-  "EmailExtractor",
-  "URLExtractor",
-  "CustomExtractor",
+    "CustomExtractor",
+    "DateExtractor",
+    "EmailExtractor",
+    "URLExtractor",
 ]

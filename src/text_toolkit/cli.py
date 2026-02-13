@@ -13,7 +13,9 @@ from rich_argparse import RichHelpFormatter
 
 from text_toolkit.analyzers import AnalyzerRunner
 from text_toolkit.models.config_models import CLIConfig
-from text_toolkit.readers.txt_reader import TXTReader
+from text_toolkit.models.text_document import TextDocument
+from text_toolkit.readers.txt_reader import TxtReader
+from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer, TransformerPipeline
 
 # Initialize global console
 console = Console()
@@ -172,8 +174,17 @@ def main() -> None:
             sys.exit(1)
 
         log_info("Reading document...", config.verbose)
-        reader = TXTReader()
-        document = reader.read(input_file)
+        reader = TxtReader()
+        lines = list(reader.read(input_file))
+        content = "\n".join(lines)
+
+        log_info("Initializing processing pipeline...", config.verbose)
+        cleaner = Cleaner()
+        normalizer = Normalizer()
+        tokenizer = Tokenizer()
+        pipeline = TransformerPipeline(tokenizer=tokenizer, cleaner=cleaner, normalizer=normalizer)
+
+        document = TextDocument(content=content, source_path=input_file, pipeline=pipeline)
 
         log_info("Running linguistic analysis...", config.verbose)
         runner = AnalyzerRunner(analyzer_names=config.analyzers)

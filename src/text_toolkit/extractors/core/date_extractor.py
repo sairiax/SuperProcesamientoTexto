@@ -17,6 +17,7 @@ class DateExtractor(RegexExtractor):
     - D-Month-YYYY (e.g., 10-Feb-2026)
 
     """
+
     name: ClassVar[str] = "DateExtractor"
     _date_patterns: ClassVar[list[str]] = [
         r"\d{4}-\d{2}-\d{2}",  # YYYY-MM-DD
@@ -36,4 +37,3 @@ class DateExtractor(RegexExtractor):
         """Return string representation of the extractor."""
         pattern_list = [item.pattern for item in self._regex_pattern_list]
         return f"{self.name}(patterns_amount={len(pattern_list)}, pattern_list={pattern_list})"
-

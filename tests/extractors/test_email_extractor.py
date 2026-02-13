@@ -9,6 +9,7 @@ def email_extractor():
     """Fixture that provides an EmailExtractor instance."""
     return EmailExtractor()
 
+
 @pytest.mark.parametrize(
     "text, expected_emails",
     [

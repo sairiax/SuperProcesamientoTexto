@@ -9,6 +9,7 @@ def date_extractor():
     """Fixture that provides a DateExtractor instance."""
     return DateExtractor()
 
+
 @pytest.mark.parametrize(
     "text, expected_dates",
     [
@@ -17,21 +18,20 @@ def date_extractor():
         ("Birth date: 15/08/1990", ["15/08/1990"]),
         ("Conference starts on 10 Feb 2026", ["10 Feb 2026"]),
         (
-          "Event on 2026-01-15, meeting 20/03/2026, and deadline 10-Apr-2026",
-          ["2026-01-15", "20/03/2026", "10-Apr-2026"]
+            "Event on 2026-01-15, meeting 20/03/2026, and deadline 10-Apr-2026",
+            ["2026-01-15", "20/03/2026", "10-Apr-2026"],
         ),
         ("Event will be in the downtown at midnight", []),
     ],
     ids=[
-      "single_date_extraction",
-      "iso_format",
-      "slash_format",
-      "month_name_abb_format",
-      "mixed_formats",
-      "text_without_dates",
-    ]
+        "single_date_extraction",
+        "iso_format",
+        "slash_format",
+        "month_name_abb_format",
+        "mixed_formats",
+        "text_without_dates",
+    ],
 )
-
 def test_date_extractor(date_extractor: Extractor, text: str, expected_dates: list[str]):
     extracted_dates = date_extractor.extract(text)
 

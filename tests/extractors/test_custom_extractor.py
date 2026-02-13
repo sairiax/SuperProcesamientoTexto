@@ -86,11 +86,7 @@ def test_create_with_patterns(name: str, patterns: list[str], expected_count: in
     ],
 )
 def test_extract_from_various_patterns(
-  name: str,
-  patterns: list[str],
-  text: str,
-  expected: list[str],
-  unique_occurrences: bool
+    name: str, patterns: list[str], text: str, expected: list[str], unique_occurrences: bool
 ):
     """Should extract matches for various patterns and modes."""
     extractor = CustomExtractor(name=name, patterns=patterns)
@@ -108,8 +104,9 @@ def test_invalid_regex_pattern():
         CustomExtractor(name="invalid", patterns=[r"[invalid(regex"])
 
     assert "Invalid regex pattern" in str(exc_info.value), (
-      "Should raise ValueError with proper message"
+        "Should raise ValueError with proper message"
     )
+
 
 def test_add_patterns_dynamically():
     """Should allow adding patterns dynamically after creation."""
@@ -120,7 +117,7 @@ def test_add_patterns_dynamically():
     phone_extractor.add_patterns([new_phone_pattern])
     assert phone_extractor.pattern_count == 2, "Should have 2 patterns after adding"
     assert new_phone_pattern in phone_extractor.patterns, (
-      f"Pattern {new_phone_pattern} should be included in the extractor"
+        f"Pattern {new_phone_pattern} should be included in the extractor"
     )
     example_text = "Call 555-123-4567 or (555) 987-6543"
     extracted_data = phone_extractor.extract(example_text)

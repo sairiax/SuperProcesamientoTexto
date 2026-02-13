@@ -16,7 +16,7 @@ class TxtReader:
         path = Path(path)
 
         if not path.exists():
-            raise FileExistsError(f"{path} does not exist")
+            raise FileNotFoundError(f"{path} does not exist")
 
         logging.info("Starting document reading...")
 

@@ -4,6 +4,7 @@ import pytest
 
 from text_toolkit.analyzers.core import SentimentAnalyzer
 from text_toolkit.models.text_document import TextDocument
+from text_toolkit.transformers import TransformerPipeline
 
 
 class TestSentimentAnalyzer:
@@ -26,7 +27,12 @@ class TestSentimentAnalyzer:
             ("Es muy malo y terrible. Horrible!", "negative"),
         ],
     )
-    def test_sentiment_detection(self, text, expected_sentiment, pipeline):
+    def test_sentiment_detection(
+        self,
+        text: str,
+        expected_sentiment: str,
+        pipeline: TransformerPipeline
+    ) -> None:
         """Test sentiment detection across different languages and intensities."""
         doc = TextDocument(content=text, pipeline=pipeline)
         analyzer = SentimentAnalyzer()
@@ -43,7 +49,7 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 0
         assert result["neg_count"] == 0
 
-    def test_mixed_sentiment(self, pipeline):
+    def test_mixed_sentiment(self, pipeline: TransformerPipeline) -> None:
         """Test document with both positive and negative words."""
         doc = TextDocument(
             content="This is good but also bad. Great and terrible.", pipeline=pipeline
@@ -57,7 +63,7 @@ class TestSentimentAnalyzer:
         assert "sentiment" in result
         assert "score" in result
 
-    def test_score_calculation(self, pipeline):
+    def test_score_calculation(self, pipeline: TransformerPipeline) -> None:
         """Test that score is correctly calculated."""
         # Document with 3 positive and 1 negative word
         doc = TextDocument(content="good great excellent bad", pipeline=pipeline)
@@ -69,7 +75,7 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 3
         assert result["neg_count"] == 1
 
-    def test_sentiment_threshold_positive(self, pipeline):
+    def test_sentiment_threshold_positive(self, pipeline: TransformerPipeline) -> None:
         """Test positive sentiment threshold (> 0.1)."""
         # Slightly positive: 2 positive, 1 negative -> (2-1)/(2+1) = 0.33
         doc = TextDocument(content="good great bad", pipeline=pipeline)
@@ -79,7 +85,7 @@ class TestSentimentAnalyzer:
         assert result["score"] > 0.1
         assert result["sentiment"] == "positive"
 
-    def test_sentiment_threshold_negative(self, pipeline):
+    def test_sentiment_threshold_negative(self, pipeline: TransformerPipeline) -> None:
         """Test negative sentiment threshold (< -0.1)."""
         # Slightly negative: 1 positive, 2 negative -> (1-2)/(1+2) = -0.33
         doc = TextDocument(content="good bad terrible", pipeline=pipeline)
@@ -89,7 +95,7 @@ class TestSentimentAnalyzer:
         assert result["score"] < -0.1
         assert result["sentiment"] == "negative"
 
-    def test_sentiment_threshold_neutral_edge(self, pipeline):
+    def test_sentiment_threshold_neutral_edge(self, pipeline: TransformerPipeline) -> None:
         """Test neutral sentiment at edge of threshold."""
         # Exactly balanced: 1 positive, 1 negative -> (1-1)/(1+1) = 0.0
         doc = TextDocument(content="good bad", pipeline=pipeline)
@@ -99,7 +105,7 @@ class TestSentimentAnalyzer:
         assert result["score"] == 0.0
         assert result["sentiment"] == "neutral"
 
-    def test_case_insensitivity(self, pipeline):
+    def test_case_insensitivity(self, pipeline: TransformerPipeline) -> None:
         """Test that sentiment words are matched case-insensitively."""
         doc = TextDocument(content="GOOD Great EXCELLENT", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
@@ -109,7 +115,7 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 3
         assert result["sentiment"] == "positive"
 
-    def test_repeated_sentiment_words(self, pipeline):
+    def test_repeated_sentiment_words(self, pipeline: TransformerPipeline) -> None:
         """Test that repeated sentiment words are counted multiple times."""
         doc = TextDocument(content="good good good bad", pipeline=pipeline)
         analyzer = SentimentAnalyzer()

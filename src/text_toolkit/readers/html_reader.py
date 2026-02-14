@@ -11,11 +11,11 @@ class _HTMLTextExtractor(HTMLParser):
         self._texts: list[str] = []
         self._ignore_content = False
 
-    def handle_starttag(self, tag, attrs):
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         if tag in ("style", "script"):
             self._ignore_content = True
 
-    def handle_endtag(self, tag):
+    def handle_endtag(self, tag: str) -> None:
         if tag in ("style", "script"):
             self._ignore_content = False
 

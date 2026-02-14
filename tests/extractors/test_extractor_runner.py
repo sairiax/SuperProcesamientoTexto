@@ -12,7 +12,10 @@ def test_extractor_runner_initialization(extractor_runner: ExtractorRunner):
     assert extractor_runner.date_extractor is not None
 
 
-def test_extractor_runner_extract_all_method(extractor_runner: ExtractorRunner, pipeline: TransformerPipeline):
+def test_extractor_runner_extract_all_method(
+    extractor_runner: ExtractorRunner,
+    pipeline: TransformerPipeline
+):
     """Should extract all types of data from a document."""
     document = TextDocument(
         content="Contact: admin@example.com, visit https://example.com on 2026-03-15",
@@ -35,7 +38,10 @@ def test_extractor_runner_extract_all_method(extractor_runner: ExtractorRunner, 
     ids=["unique", "duplicates"],
 )
 def test_extractor_runner_unique_occurrences(
-    extractor_runner: ExtractorRunner, pipeline: TransformerPipeline, unique_occurrences: bool, expected_email_count: int
+    extractor_runner: ExtractorRunner,
+    pipeline: TransformerPipeline,
+    unique_occurrences: bool,
+    expected_email_count: int
 ):
     """Should respect unique_occurrences parameter."""
     document = TextDocument(

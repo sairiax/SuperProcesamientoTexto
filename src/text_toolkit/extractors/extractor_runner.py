@@ -1,7 +1,8 @@
 import logging
 
 from text_toolkit.extractors.core import DateExtractor, EmailExtractor, URLExtractor
-from text_toolkit.models.text_document import ExtractionResult, TextDocument
+from text_toolkit.models.extraction_result import ExtractionResult
+from text_toolkit.models.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 

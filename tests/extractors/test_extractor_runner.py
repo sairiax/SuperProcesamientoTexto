@@ -1,7 +1,8 @@
 import pytest
 
 from text_toolkit.extractors import ExtractorRunner
-from text_toolkit.models.text_document import ExtractionResult, TextDocument
+from text_toolkit.models.extraction_result import ExtractionResult
+from text_toolkit.models.text_document import TextDocument
 from text_toolkit.transformers import TransformerPipeline
 
 

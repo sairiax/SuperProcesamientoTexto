@@ -5,20 +5,14 @@ from text_toolkit.models.text_document import ExtractionResult, TextDocument
 from text_toolkit.transformers import TransformerPipeline
 
 
-@pytest.fixture
-def extractor_runner():
-    """Fixture that provides an ExtractorRunner instance."""
-    return ExtractorRunner()
-
-
-def test_extractor_runner_initialization(extractor_runner):
+def test_extractor_runner_initialization(extractor_runner: ExtractorRunner):
     """Should verify that ExtractorRunner initializes with all core extractors."""
     assert extractor_runner.email_extractor is not None
     assert extractor_runner.url_extractor is not None
     assert extractor_runner.date_extractor is not None
 
 
-def test_extractor_runner_extract_all_method(extractor_runner, pipeline: TransformerPipeline):
+def test_extractor_runner_extract_all_method(extractor_runner: ExtractorRunner, pipeline: TransformerPipeline):
     """Should extract all types of data from a document."""
     document = TextDocument(
         content="Contact: admin@example.com, visit https://example.com on 2026-03-15",
@@ -41,7 +35,7 @@ def test_extractor_runner_extract_all_method(extractor_runner, pipeline: Transfo
     ids=["unique", "duplicates"],
 )
 def test_extractor_runner_unique_occurrences(
-    extractor_runner, pipeline: TransformerPipeline, unique_occurrences, expected_email_count
+    extractor_runner: ExtractorRunner, pipeline: TransformerPipeline, unique_occurrences: bool, expected_email_count: int
 ):
     """Should respect unique_occurrences parameter."""
     document = TextDocument(
@@ -53,7 +47,7 @@ def test_extractor_runner_unique_occurrences(
     assert len(result.email_matches) == expected_email_count
 
 
-def test_extractor_runner_empty_document(extractor_runner, empty_doc):
+def test_extractor_runner_empty_document(extractor_runner:ExtractorRunner, empty_doc: TextDocument):
     """Should return empty result for empty document."""
     result = extractor_runner.extract_all(empty_doc)
 

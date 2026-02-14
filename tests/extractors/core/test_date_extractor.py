@@ -1,13 +1,6 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
-from text_toolkit.extractors.core import DateExtractor
-
-
-@pytest.fixture
-def date_extractor():
-    """Fixture that provides a DateExtractor instance."""
-    return DateExtractor()
 
 
 @pytest.mark.parametrize(

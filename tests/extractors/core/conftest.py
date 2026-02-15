@@ -8,6 +8,7 @@ from text_toolkit.extractors.core import (
     EmailExtractor,
     URLExtractor,
 )
+from text_toolkit.transformers.normalizer import Normalizer
 
 
 @pytest.fixture
@@ -44,3 +45,9 @@ def custom_ip_extractor():
         name="ip_address",
         patterns=[r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"],
     )
+
+
+@pytest.fixture
+def normalizer():
+    """Fixture that provides a Normalizer instance."""
+    return Normalizer()

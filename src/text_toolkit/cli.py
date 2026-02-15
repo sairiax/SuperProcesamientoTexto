@@ -57,6 +57,8 @@ def parse_arguments() -> argparse.Namespace:
                "  python main.py input.txt -e                       # Run all extractors only\n"
                "  python main.py input.txt -e EmailExtractor        # Run only email extractor\n"
                "  python main.py input.txt -e EmailExtractor URLExtractor  # Multiple extractors\n"
+               "  python main.py input.txt -t Cleaner               # Run only cleaner transformer\n"
+               "  python main.py input.txt -t Cleaner Normalizer    # Multiple transformers\n"
                "  python main.py input.txt -o json                  # Both with JSON output[/italic]",
         formatter_class=RichHelpFormatter,
     )
@@ -114,7 +116,101 @@ def parse_arguments() -> argparse.Namespace:
         help="Specify which extractors to run. Options: EmailExtractor, URLExtractor, DateExtractor (required).",
     )
 
+    # Enable transformers
+    parser.add_argument(
+        "-t",
+        "--transformers",
+        nargs="+",
+        choices=[
+            "Cleaner",
+            "Normalizer",
+            "Tokenizer",
+        ],
+        metavar="TRANSFORMER",
+        help="Specify which transformers to run. Options: Cleaner, Normalizer, Tokenizer (required).",
+    )
+
     return parser.parse_args()
+
+
+def apply_transformers(
+    content: str, transformer_names: list[str] | None, verbose: bool
+) -> str:
+    """Applies specified transformers to content and returns the final output."""
+    transformer_map = {
+        "Cleaner": Cleaner(),
+        "Normalizer": Normalizer(),
+        "Tokenizer": Tokenizer(),
+    }
+
+    if transformer_names is None:
+        transformer_names = list(transformer_map.keys())
+
+    current_content = content
+
+    for name in transformer_names:
+        if name in transformer_map:
+            transformer = transformer_map[name]
+            log_info(f"Applying {name}...", verbose)
+            if name == "Tokenizer":
+                transformed = " ".join(transformer.tokenize_text(current_content))
+            elif name == "Cleaner":
+                transformed = transformer.clean_text(current_content)
+            elif name == "Normalizer":
+                transformed = transformer.normalize_text(current_content)
+            
+            current_content = transformed
+
+    return current_content
+
+
+def collect_transformer_results(
+    content: str, transformer_names: list[str] | None, verbose: bool
+) -> dict[str, str]:
+    """Applies specified transformers to content and returns all intermediate outputs."""
+    transformer_map = {
+        "Cleaner": Cleaner(),
+        "Normalizer": Normalizer(),
+        "Tokenizer": Tokenizer(),
+    }
+
+    if transformer_names is None:
+        transformer_names = list(transformer_map.keys())
+
+    results: dict[str, str] = {}
+    current_content = content
+
+    for name in transformer_names:
+        if name in transformer_map:
+            transformer = transformer_map[name]
+            log_info(f"Applying {name}...", verbose)
+            if name == "Tokenizer":
+                transformed = " ".join(transformer.tokenize_text(current_content))
+            elif name == "Cleaner":
+                transformed = transformer.clean_text(current_content)
+            elif name == "Normalizer":
+                transformed = transformer.normalize_text(current_content)
+
+            results[name] = transformed
+            current_content = transformed
+
+    return results
+
+
+def display_transformer_results(output_format: str, results: dict[str, str]) -> None:
+    """Displays transformer results in the specified format."""
+    if output_format == "json":
+        import json
+
+        json_str = json.dumps(results, indent=2, ensure_ascii=False)
+        console.print(
+            Panel(json_str, title="[bold cyan]Transformer Results[/bold cyan]", border_style="cyan")
+        )
+    else:
+        for name, content in results.items():
+            console.print(f"\n[bold blue]{name} Result:[/bold blue]")
+            console.print(Panel(content, border_style="blue"))
+            console.print()
 
 
 def display_results(
@@ -273,6 +369,7 @@ def main() -> None:
                 verbose=args.verbose > 0,
                 analyzers=args.analyzers,
                 extractors=args.extractors,
+                transformers=args.transformers,
             )
         except ValidationError as ve:
             console.print(f"[bold red]Configuration Error:[/bold red] {ve}")
@@ -310,35 +407,53 @@ def main() -> None:
 
         document = TextDocument(content=content, source_path=input_file, pipeline=pipeline)
 
-
         # determine what to run
-        no_args = config.extractors is None and config.analyzers is None
+        no_args = config.extractors is None and config.analyzers is None and config.transformers is None
         run_analyzers = no_args or config.analyzers is not None
         run_extractors = no_args or config.extractors is not None
+        run_transformers_only = config.transformers is not None and config.analyzers is None and config.extractors is None
 
         analyzers_results = {}
-
-        if run_analyzers:
-            log_info("Running linguistic analysis...", config.verbose)
-            analyzer_runner = AnalyzerRunner(analyzer_names=config.analyzers)
-            analyzers_results = analyzer_runner.analyze(document)
-
-        # Run extractors if enabled
         extractors_results = None
-        if run_extractors:
-            log_info("Running extractors...", config.verbose)
-            # If extractors is an empty list [], use all extractors (None)
-            # If extractors is a list with names, use those specific extractors
+        transformers_results = None
 
-            extractor_runner = ExtractorRunner(extractor_names=config.extractors)
-            extractors_results = extractor_runner.extract_all(document)
-            log_info(
-                f"Extraction completed: {len(extractors_results.email_matches)} emails, "
-                f"{len(extractors_results.url_matches)} URLs, {len(extractors_results.date_matches)} dates",
-                config.verbose,
-            )
+        # Apply transformers if specified (for analysis/extraction or standalone)
+        if config.transformers is not None:
+            log_info("Applying transformers...", config.verbose)
+            if run_transformers_only:
+                # Only transformers: return dict with all results
+                transformers_results = collect_transformer_results(
+                    document.content, config.transformers, config.verbose
+                )
+                display_transformer_results(config.output, transformers_results)
+            else:
+                # Transformers with analysis/extraction: use transformed content
+                processed_content = apply_transformers(
+                    document.content, config.transformers, config.verbose
+                )
+                # Update document content with transformed version
+                document.content = processed_content
 
-        display_results(config.output, analyzers_results, extractors_results)
+        # Run analysis/extraction if not transformers-only
+        if not run_transformers_only:
+            if run_analyzers:
+                log_info("Running linguistic analysis...", config.verbose)
+                analyzer_runner = AnalyzerRunner(analyzer_names=config.analyzers)
+                analyzers_results = analyzer_runner.analyze(document)
+
+            # Run extractors if enabled
+            if run_extractors:
+                log_info("Running extractors...", config.verbose)
+                extractor_runner = ExtractorRunner(extractor_names=config.extractors)
+                extractors_results = extractor_runner.extract_all(document)
+                log_info(
+                    f"Extraction completed: {len(extractors_results.email_matches)} emails, "
+                    f"{len(extractors_results.url_matches)} URLs, {len(extractors_results.date_matches)} dates",
+                    config.verbose,
+                )
+
+            display_results(config.output, analyzers_results, extractors_results)
+
         log_info("Processing completed successfully.", config.verbose)
 
     except KeyboardInterrupt:

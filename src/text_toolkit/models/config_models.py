@@ -26,3 +26,4 @@ class CLIConfig(BaseModel):
     verbose: bool = False
     analyzers: list[str] | None = None
     extractors: list[str] | None = None
+    transformers: list[str] | None = None

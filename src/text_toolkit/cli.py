@@ -9,14 +9,14 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.panel import Panel
 from rich.table import Table
-from rich_argparse import RichHelpFormatter
+from rich_argparse import RawDescriptionRichHelpFormatter
 
 from text_toolkit.analyzers import AnalyzerRunner
 from text_toolkit.extractors import ExtractorRunner
 from text_toolkit.models import ExtractionResult
 from text_toolkit.models.config_models import CLIConfig
 from text_toolkit.models.text_document import TextDocument
-from text_toolkit.readers import TxtReader, MarkdownReader, HtmlReader
+from text_toolkit.readers import HtmlReader, MarkdownReader, TxtReader
 from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer, TransformerPipeline
 
 # Initialize global console
@@ -52,15 +52,15 @@ def parse_arguments() -> argparse.Namespace:
         description="[bold blue]TextToolkit[/bold blue]: A professional suite for "
         "advanced linguistic analysis.",
         epilog="[italic]Examples:\n"
-               "  python main.py input.txt                          # Run both analyzers and extractors\n"
+               "  python main.py input.txt                          # Run both analyzers and extractors\n"  # noqa: E501
                "  python main.py input.txt -a FrequencyAnalyzer     # Run only specific analyzer\n"
                "  python main.py input.txt -e                       # Run all extractors only\n"
                "  python main.py input.txt -e EmailExtractor        # Run only email extractor\n"
                "  python main.py input.txt -e EmailExtractor URLExtractor  # Multiple extractors\n"
-               "  python main.py input.txt -t Cleaner               # Run only cleaner transformer\n"
+               "  python main.py input.txt -t Cleaner               # Run only cleaner transformer\n"       # noqa: E501
                "  python main.py input.txt -t Cleaner Normalizer    # Multiple transformers\n"
-               "  python main.py input.txt -o json                  # Both with JSON output[/italic]",
-        formatter_class=RichHelpFormatter,
+               "  python main.py input.txt -o json                  # Both with JSON output[/italic]",      # noqa: E501
+        formatter_class=RawDescriptionRichHelpFormatter,
     )
 
     # Positional argument: Input file
@@ -113,7 +113,7 @@ def parse_arguments() -> argparse.Namespace:
             "URLExtractor",
         ],
         metavar="EXTRACTOR",
-        help="Specify which extractors to run. Options: EmailExtractor, URLExtractor, DateExtractor (required).",
+        help="Specify which extractors to run. Options: EmailExtractor, URLExtractor, DateExtractor (required).", # noqa: E501
     )
 
     # Enable transformers
@@ -127,7 +127,7 @@ def parse_arguments() -> argparse.Namespace:
             "Tokenizer",
         ],
         metavar="TRANSFORMER",
-        help="Specify which transformers to run. Options: Cleaner, Normalizer, Tokenizer (required).",
+        help="Specify which transformers to run. Options: Cleaner, Normalizer, Tokenizer (required).", # noqa: E501
     )
 
     return parser.parse_args()
@@ -158,7 +158,7 @@ def apply_transformers(
                 transformed = transformer.clean_text(current_content)
             elif name == "Normalizer":
                 transformed = transformer.normalize_text(current_content)
-            
+
             current_content = transformed
 
     return current_content
@@ -408,10 +408,18 @@ def main() -> None:
         document = TextDocument(content=content, source_path=input_file, pipeline=pipeline)
 
         # determine what to run
-        no_args = config.extractors is None and config.analyzers is None and config.transformers is None
+        no_args = (
+            config.extractors is None
+            and config.analyzers is None
+            and config.transformers is None
+        )
         run_analyzers = no_args or config.analyzers is not None
         run_extractors = no_args or config.extractors is not None
-        run_transformers_only = config.transformers is not None and config.analyzers is None and config.extractors is None
+        run_transformers_only = (
+            config.transformers is not None
+            and config.analyzers is None
+            and config.extractors is None
+        )
 
         analyzers_results = {}
         extractors_results = None
@@ -447,8 +455,11 @@ def main() -> None:
                 extractor_runner = ExtractorRunner(extractor_names=config.extractors)
                 extractors_results = extractor_runner.extract_all(document)
                 log_info(
-                    f"Extraction completed: {len(extractors_results.email_matches)} emails, "
-                    f"{len(extractors_results.url_matches)} URLs, {len(extractors_results.date_matches)} dates",
+                    (
+                        f"Extraction completed: {len(extractors_results.email_matches)} emails, "
+                        f"{len(extractors_results.url_matches)} URLs, "
+                        f"{len(extractors_results.date_matches)} dates"
+                    ),
                     config.verbose,
                 )
 

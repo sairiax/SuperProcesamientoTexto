@@ -57,33 +57,35 @@ class ExtractorRunner:
             'EmailExtractor', 'URLExtractor', 'DateExtractor'.
             If None, all extractors are initialized.
         """
-        # Create all available extractors with their corresponding keys
-        all_extractors = {
-            'email': EmailExtractor(),
-            'url': URLExtractor(),
-            'date': DateExtractor(),
+        # Map extractor class names to their classes and keys
+        name_to_class = {
+            'EmailExtractor': EmailExtractor,
+            'URLExtractor': URLExtractor,
+            'DateExtractor': DateExtractor,
         }
 
-        # Map extractor class names to their keys
         name_to_key = {
             'EmailExtractor': 'email',
             'URLExtractor': 'url',
             'DateExtractor': 'date',
         }
 
+        self.extractors = {}
+
         if extractor_names:
-            # only specified extractors
-            self.extractors = {}
+            # only specified extractors - create only those requested
             for name in extractor_names:
-                if name in name_to_key:
+                if name in name_to_key and name in name_to_class:
                     key = name_to_key[name]
-                    self.extractors[key] = all_extractors[key]
+                    self.extractors[key] = name_to_class[name]()
                 else:
                     logger.warning("Unknown extractor name: %s", name)
             logger.info("Initialized ExtractorRunner with specific extractors: %s", extractor_names)
         else:
-            # all extractors
-            self.extractors = all_extractors
+            # all extractors - create all of them
+            for name, cls in name_to_class.items():
+                key = name_to_key[name]
+                self.extractors[key] = cls()
             logger.info("Initialized ExtractorRunner with all core extractors")
 
         logger.debug("Active extractors: %s", list(self.extractors.keys()))

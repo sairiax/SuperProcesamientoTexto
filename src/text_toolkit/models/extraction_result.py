@@ -12,6 +12,7 @@ class ExtractionResult:
     email_matches: list[str] = field(default_factory=list)
     url_matches: list[str] = field(default_factory=list)
     date_matches: list[str] = field(default_factory=list)
+    active_extractors: list[str] | None = None
 
     def __repr__(self) -> str:
         """Return a concise representation for logging/debugging."""

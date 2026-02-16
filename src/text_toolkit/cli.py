@@ -13,7 +13,7 @@ from text_toolkit.cli_runner import process_document
 from text_toolkit.models.config_models import CLIConfig
 from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer
 
-# Initialize global console
+
 console = Console()
 
 
@@ -32,8 +32,6 @@ def setup_logging(verbosity: int) -> None:
         handlers=[RichHandler(console=console, rich_tracebacks=True, show_path=False)],
     )
 
-
-# TODO: Add try-cath?
 def parse_arguments() -> argparse.Namespace:
     """
     Parses command-line arguments using RichHelpFormatter for a better interface.
@@ -221,7 +219,6 @@ def main() -> None:
             console.print(f"[bold red]Configuration Error:[/bold red] {ve}")
             sys.exit(1)
 
-        # Validate file exists
         input_file = Path(config.input_path)
         if not input_file.exists():
             console.print(
@@ -229,10 +226,8 @@ def main() -> None:
             )
             sys.exit(1)
 
-        # Process document and get results
         analyzers_results, extractors_results, transformers_results = process_document(config)
 
-        # Display results based on what was run
         if transformers_results is not None:
             display_transformer_results(config.output, transformers_results)
         else:

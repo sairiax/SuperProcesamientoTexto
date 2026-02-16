@@ -2,22 +2,16 @@ import argparse
 import logging
 import sys
 from pathlib import Path
-from typing import Any
 
 from pydantic import ValidationError
 from rich.console import Console
 from rich.logging import RichHandler
-from rich.panel import Panel
-from rich.table import Table
 from rich_argparse import RawDescriptionRichHelpFormatter
 
-from text_toolkit.analyzers import AnalyzerRunner
-from text_toolkit.extractors import ExtractorRunner
-from text_toolkit.models import ExtractionResult
+from text_toolkit.cli_display import display_results, display_transformer_results
+from text_toolkit.cli_runner import process_document
 from text_toolkit.models.config_models import CLIConfig
-from text_toolkit.models.text_document import TextDocument
-from text_toolkit.readers import HtmlReader, MarkdownReader, TxtReader
-from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer, TransformerPipeline
+from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer
 
 # Initialize global console
 console = Console()
@@ -197,154 +191,6 @@ def collect_transformer_results(
     return results
 
 
-def display_transformer_results(output_format: str, results: dict[str, str]) -> None:
-    """Displays transformer results in the specified format."""
-    if output_format == "json":
-        import json
-
-        json_str = json.dumps(results, indent=2, ensure_ascii=False)
-        console.print(
-            Panel(json_str, title="[bold cyan]Transformer Results[/bold cyan]", border_style="cyan")
-        )
-    else:
-        for name, content in results.items():
-            console.print(f"\n[bold blue]{name} Result:[/bold blue]")
-            console.print(Panel(content, border_style="blue"))
-            console.print()
-
-
-def display_results(
-    output_format: str,
-    analyzer_results: dict[str, Any],
-    extractor_results: ExtractionResult | None,
-) -> None:
-    """
-    Displays the analysis results in the specified format using Rich.
-
-    Args:
-        results (dict[str, Any]): The analysis findings.
-        output_format (str): How to display the results ('text' or 'json').
-        extraction_result (ExtractionResult | None): Extracted data (emails, URLs, dates).
-    """
-    if output_format == "json":
-        import json
-
-        # Build complete output with analysis and extraction
-        output_data = {}
-
-        if analyzer_results:
-            output_data["analysis"] = analyzer_results
-
-        if extractor_results:
-            # Determine which extractors to include in the output
-            active_extractors = extractor_results.active_extractors or []
-            show_emails = 'email' in active_extractors
-            show_urls = 'url' in active_extractors
-            show_dates = 'date' in active_extractors
-
-            extraction_data = {}
-            summary = {}
-
-            if show_emails:
-                extraction_data["emails"] = extractor_results.email_matches
-                summary["total_emails"] = len(extractor_results.email_matches)
-
-            if show_urls:
-                extraction_data["urls"] = extractor_results.url_matches
-                summary["total_urls"] = len(extractor_results.url_matches)
-
-            if show_dates:
-                extraction_data["dates"] = extractor_results.date_matches
-                summary["total_dates"] = len(extractor_results.date_matches)
-
-            extraction_data["summary"] = summary
-            output_data["extraction"] = extraction_data
-
-        json_str = json.dumps(output_data, indent=2, ensure_ascii=False)
-        console.print(
-            Panel(json_str, title="[bold cyan]JSON Result[/bold cyan]", border_style="cyan")
-        )
-    else:
-        # Display analysis results if available
-        if analyzer_results:
-            table = Table(
-                title="[bold blue]Analysis Summary[/bold blue]",
-                show_header=True,
-                header_style="bold magenta",
-            )
-            table.add_column("Metric", style="dim", width=25)
-            table.add_column("Value", style="bold green")
-
-            for key, value in analyzer_results.items():
-                formatted_key = key.replace("_", " ").title()
-
-                # Special formatting for certain types
-                if isinstance(value, dict):
-                    # Format sub-dictionaries (like top words) as a more readable string
-                    val_str = ", ".join([f"{k}: {v}" for k, v in list(value.items())[:5]])
-                    if len(value) > 5:
-                        val_str += " ..."
-                else:
-                    val_str = str(value)
-
-                table.add_row(formatted_key, val_str)
-
-            console.print("\n")
-            console.print(table)
-            console.print("\n")
-
-        # Display extraction results if available
-        if extractor_results:
-            extraction_table = Table(
-                title="[bold cyan]Extracted Data[/bold cyan]",
-                show_header=True,
-                header_style="bold blue",
-            )
-            extraction_table.add_column("Type", style="dim", width=15)
-            extraction_table.add_column("Count", style="bold yellow", width=10)
-            extraction_table.add_column("Samples", style="bold green")
-
-            # Determine which extractors to display
-            active_extractors = extractor_results.active_extractors or []
-            show_emails = 'email' in active_extractors
-            show_urls = 'url' in active_extractors
-            show_dates = 'date' in active_extractors
-
-            # Emails
-            if show_emails:
-                email_sample = ", ".join(extractor_results.email_matches[:3])
-                if len(extractor_results.email_matches) > 3:
-                    email_sample += " ..."
-                extraction_table.add_row(
-                    "Emails",
-                    str(len(extractor_results.email_matches)),
-                    email_sample or "(none)",
-                )
-
-            # URLs
-            if show_urls:
-                url_sample = ", ".join(extractor_results.url_matches[:3])
-                if len(extractor_results.url_matches) > 3:
-                    url_sample += " ..."
-                extraction_table.add_row(
-                    "URLs",
-                    str(len(extractor_results.url_matches)),
-                    url_sample or "(none)",
-                )
-
-            # Dates
-            if show_dates:
-                date_sample = ", ".join(extractor_results.date_matches[:3])
-                if len(extractor_results.date_matches) > 3:
-                    date_sample += " ..."
-                extraction_table.add_row(
-                    "Dates",
-                    str(len(extractor_results.date_matches)),
-                    date_sample or "(none)",
-                )
-
-            console.print(extraction_table)
-            console.print("\n")
 
 
 def log_info(message: str, verbose: bool) -> None:
@@ -375,8 +221,7 @@ def main() -> None:
             console.print(f"[bold red]Configuration Error:[/bold red] {ve}")
             sys.exit(1)
 
-        log_info(f"Starting processing of: {config.input_path}", config.verbose)
-
+        # Validate file exists
         input_file = Path(config.input_path)
         if not input_file.exists():
             console.print(
@@ -384,85 +229,13 @@ def main() -> None:
             )
             sys.exit(1)
 
-        log_info("Reading document...", config.verbose)
-        # Select reader based on file extension
-        file_extension = input_file.suffix.lower()
-        if file_extension == ".md":
-            reader = MarkdownReader()
-            log_info(f"Using MarkdownReader for {input_file.name}", config.verbose)
-        elif file_extension == ".html":
-            reader = HtmlReader()
-            log_info(f"Using HtmlReader for {input_file.name}", config.verbose)
+        # Process document and get results
+        analyzers_results, extractors_results, transformers_results = process_document(config)
+
+        # Display results based on what was run
+        if transformers_results is not None:
+            display_transformer_results(config.output, transformers_results)
         else:
-            reader = TxtReader()
-            log_info(f"Using TxtReader for {input_file.name}", config.verbose)
-        lines = list(reader.read(input_file))
-        content = "\n".join(lines)
-
-        log_info("Initializing processing pipeline...", config.verbose)
-        cleaner = Cleaner()
-        normalizer = Normalizer()
-        tokenizer = Tokenizer()
-        pipeline = TransformerPipeline(tokenizer=tokenizer, cleaner=cleaner, normalizer=normalizer)
-
-        document = TextDocument(content=content, source_path=input_file, pipeline=pipeline)
-
-        # determine what to run
-        no_args = (
-            config.extractors is None
-            and config.analyzers is None
-            and config.transformers is None
-        )
-        run_analyzers = no_args or config.analyzers is not None
-        run_extractors = no_args or config.extractors is not None
-        run_transformers_only = (
-            config.transformers is not None
-            and config.analyzers is None
-            and config.extractors is None
-        )
-
-        analyzers_results = {}
-        extractors_results = None
-        transformers_results = None
-
-        # Apply transformers if specified (for analysis/extraction or standalone)
-        if config.transformers is not None:
-            log_info("Applying transformers...", config.verbose)
-            if run_transformers_only:
-                # Only transformers: return dict with all results
-                transformers_results = collect_transformer_results(
-                    document.content, config.transformers, config.verbose
-                )
-                display_transformer_results(config.output, transformers_results)
-            else:
-                # Transformers with analysis/extraction: use transformed content
-                processed_content = apply_transformers(
-                    document.content, config.transformers, config.verbose
-                )
-                # Update document content with transformed version
-                document.content = processed_content
-
-        # Run analysis/extraction if not transformers-only
-        if not run_transformers_only:
-            if run_analyzers:
-                log_info("Running linguistic analysis...", config.verbose)
-                analyzer_runner = AnalyzerRunner(analyzer_names=config.analyzers)
-                analyzers_results = analyzer_runner.analyze(document)
-
-            # Run extractors if enabled
-            if run_extractors:
-                log_info("Running extractors...", config.verbose)
-                extractor_runner = ExtractorRunner(extractor_names=config.extractors)
-                extractors_results = extractor_runner.extract_all(document)
-                log_info(
-                    (
-                        f"Extraction completed: {len(extractors_results.email_matches)} emails, "
-                        f"{len(extractors_results.url_matches)} URLs, "
-                        f"{len(extractors_results.date_matches)} dates"
-                    ),
-                    config.verbose,
-                )
-
             display_results(config.output, analyzers_results, extractors_results)
 
         log_info("Processing completed successfully.", config.verbose)

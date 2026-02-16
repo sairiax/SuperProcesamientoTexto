@@ -4,7 +4,7 @@ from typing import Protocol
 
 
 class Reader(Protocol):
-    """Interfaz base para lectura de documento."""
+    """Base Protocol for reading documents."""
 
     def read(self, path: str | Path) -> Generator[str, None, None]:
         """Yield lines from a file

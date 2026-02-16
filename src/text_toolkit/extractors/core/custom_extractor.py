@@ -49,8 +49,8 @@ class CustomExtractor(RegexExtractor):
         :type patterns: list[str]
         :raises ValueError: If any pattern is invalid regex
         """
+        super().__init__(patterns)
         self.name = name
-        self._extractor: RegexExtractor = RegexExtractor(patterns)
         logger.info("Initialized CustomExtractor '%s' with %d patterns", name, len(patterns))
 
     def extract(self, text: str, unique_occurrences: bool = False) -> list[str]:
@@ -69,7 +69,7 @@ class CustomExtractor(RegexExtractor):
             self.name,
             len(text),
         )
-        results = self._extractor.extract(text, unique_occurrences=unique_occurrences)
+        results = super().extract(text, unique_occurrences=unique_occurrences)
         logger.info(
             "CustomExtractor '%s' found %d matches (unique_occurrences=%s)",
             self.name,
@@ -78,35 +78,19 @@ class CustomExtractor(RegexExtractor):
         )
         return results
 
-    def add_patterns(self, patterns: list[str]) -> None:
-        """
-        Add multiple patterns to the extractor.
-
-        :param patterns: List of regex patterns to add
-        :type patterns: list[str]
-        :raises ValueError: If any pattern is invalid regex
-        """
-        logger.info("Adding %d new patterns to CustomExtractor '%s'", len(patterns), self.name)
-        self._extractor.add_patterns(patterns)
-        logger.debug(
-            "Total patterns in CustomExtractor '%s': %d",
-            self.name,
-            len(self._extractor._regex_pattern_list),
-        )
-
     @property
     def pattern_count(self) -> int:
         """Return the number of registered regex patterns."""
-        return len(self._extractor._regex_pattern_list)
+        return len(self._regex_pattern_list)
 
     @property
     def patterns(self) -> list[str]:
         """Return the registered regex patterns as strings."""
-        return [item.pattern for item in self._extractor._regex_pattern_list]
+        return [item.pattern for item in self._regex_pattern_list]
 
     def __repr__(self) -> str:
         """Return string representation of the extractor."""
-        pattern_list = [item.pattern for item in self._extractor._regex_pattern_list]
+        pattern_list = [item.pattern for item in self._regex_pattern_list]
         return (
             f"CustomExtractor(name='{self.name}', "
             f"patterns_amount={len(pattern_list)}, "

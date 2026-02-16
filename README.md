@@ -217,6 +217,7 @@ src/text_toolkit/
 │   └── pipeline.py
 │
 ├── readers/           # Input format handlers
+│   ├── base.py
 │   ├── txt_reader.py
 │   ├── markdown_reader.py
 │   └── html_reader.py

@@ -1,0 +1,20 @@
+URLs 5
+- Wiki Interna: https://intranet.example.org/projects/aurora
+- Repositorio: https://github.com/example/aurora-sync
+- Documentación: http://docs.example.com/aurora/v1.2/index.html
+- Tracker de errores: https://tracker.example.net/issues?project=aurora
+- API Staging: https://staging-api.example.org/v2/sync
+
+Fechas 5
+- Última actualización: 2026-02-10
+- Creación del documento: 5 Jan 2025
+- Prototipo completado: 12/03/2025
+- Fecha de reunión: 2025-09-14
+- Lanzamiento final: 2026.01.30
+
+Emails: 5
+- Project Lead: emily.carter@aurora-example.com
+- Technical Coordinator: m.tan@engineering-example.net
+- Soporte: aurora-support@example.com
+- Seguridad: security-team@example.org
+- Recursos Humanos: hr-aurora@example.org

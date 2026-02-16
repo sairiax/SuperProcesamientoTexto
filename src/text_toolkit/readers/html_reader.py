@@ -15,6 +15,10 @@ class _HTMLTextExtractor(HTMLParser):
         if tag in ("style", "script"):
             self._ignore_content = True
 
+        for attr_name, attr_value in attrs:
+            if attr_value and attr_name in ("href", "src"):
+                self._texts.append(attr_value)
+
     def handle_endtag(self, tag: str) -> None:
         if tag in ("style", "script"):
             self._ignore_content = False

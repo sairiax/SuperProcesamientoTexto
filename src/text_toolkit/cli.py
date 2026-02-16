@@ -13,7 +13,6 @@ from text_toolkit.cli_runner import process_document
 from text_toolkit.models.config_models import CLIConfig
 from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer
 
-
 console = Console()
 
 

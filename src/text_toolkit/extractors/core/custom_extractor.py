@@ -78,22 +78,6 @@ class CustomExtractor(RegexExtractor):
         )
         return results
 
-    def add_patterns(self, patterns: list[str]) -> None:
-        """
-        Add multiple patterns to the extractor.
-
-        :param patterns: List of regex patterns to add
-        :type patterns: list[str]
-        :raises ValueError: If any pattern is invalid regex
-        """
-        logger.info("Adding %d new patterns to CustomExtractor '%s'", len(patterns), self.name)
-        super().add_patterns(patterns)
-        logger.debug(
-            "Total patterns in CustomExtractor '%s': %d",
-            self.name,
-            len(self._regex_pattern_list),
-        )
-
     @property
     def pattern_count(self) -> int:
         """Return the number of registered regex patterns."""

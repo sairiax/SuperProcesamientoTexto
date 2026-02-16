@@ -15,7 +15,7 @@ def test_normalize_removes_extra_spaces():
 
 def test_cleaner_preserves_emails_urls_dates():
     c = Cleaner()
-    text = """16 Feb 2026 Contacta: test@example.com!!! 
+    text = """16 Feb 2026 Contacta: test@example.com!!!
     o visita https://example.com?? antes de 15/03/2026!"""
     cleaned = c.clean_text(text)
 

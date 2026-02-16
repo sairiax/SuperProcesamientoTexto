@@ -16,9 +16,9 @@ def test_normalize_removes_extra_spaces():
     assert n.normalize_text("hello   world") == "hello world"
 
 
-def test_cleaner_preserves_emails_and_urls():
+def test_cleaner_preserves_emails_urls_dates():
     c = Cleaner()
-    text = "Contacta: test@example.com!!! o visita https://example.com??"
+    text = "16 Feb 2026 Contacta: test@example.com!!! o visita https://example.com?? antes de 15/03/2026!"
     cleaned = c.clean_text(text)
 
     assert "test@example.com" in cleaned
@@ -26,6 +26,9 @@ def test_cleaner_preserves_emails_and_urls():
     assert "https://example.com" in cleaned
     assert "!" not in cleaned
     assert "?" not in cleaned
+    assert "16 Feb 2026" in cleaned
+    assert "15/03/2026" in cleaned
+    assert "15/03/2026!" not in cleaned
 
 
 def test_tokenizer_splits_by_spaces():

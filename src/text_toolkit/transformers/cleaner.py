@@ -22,10 +22,6 @@ class Cleaner:
         rf"\b(?:{_months})\s+\d{{1,2}}(?:st|nd|rd|th)?\,?\s+\d{{4}}\b",
         re.IGNORECASE,
     )
-    _date_month_name_short_re = re.compile(
-        rf"\b\d{{1,2}}\s+(?:{_months})\s+\d{{4}}\b",
-        re.IGNORECASE,
-    )
 
     _punct_re = re.compile(r"[^\w\s]", re.UNICODE)
 
@@ -49,7 +45,6 @@ class Cleaner:
         text = self._date_ymd_sep_re.sub(protect, text)
         text = self._date_dmy_slash_re.sub(protect, text)
         text = self._date_month_name_long_re.sub(protect, text)
-        text = self._date_month_name_short_re.sub(protect, text)
 
         cleaned = self._punct_re.sub(" ", text)
         cleaned = re.sub(r"\s+", " ", cleaned).strip()

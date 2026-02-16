@@ -269,7 +269,7 @@ uv run pyright
 uv run pytest
 
 # Run with coverage report
-uv run pytest --cov=src/text_toolkit --cov-report=html
+v run pytest --cov=text_toolkit --cov-report=term-missing
 ```
 
 ---

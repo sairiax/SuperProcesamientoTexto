@@ -1,13 +1,6 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
-from text_toolkit.extractors.core import URLExtractor
-
-
-@pytest.fixture
-def url_extractor():
-    """Fixture that provides a URLExtractor instance."""
-    return URLExtractor()
 
 
 @pytest.mark.parametrize(

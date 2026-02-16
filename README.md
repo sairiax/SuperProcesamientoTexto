@@ -22,7 +22,24 @@ uv run main.py sample.txt
 
 # Advanced: Choose analyzers and JSON output
 uv run main.py sample.txt -a SentimentAnalyzer -o json -v
+
+# Extractors: only emails (original text)
+uv run main.py sample.txt -e EmailExtractor
+
+# Transformers only (prints transformer output)
+uv run main.py sample.txt -t Normalizer
+
+# Transformers + extractors (extract on transformed text)
+uv run main.py sample.txt -t Normalizer -e EmailExtractor
 ```
+
+### CLI Features
+- **Analyzers**: Run all or specific analyzers with `-a/--analyzers`.
+- **Extractors**: Run all or specific extractors with `-e/--extractors` (Email, URL, Date).
+- **Transformers**: Apply `Cleaner`, `Normalizer`, `Tokenizer` with `-t/--transformers`.
+	- If `-t` is used alone, the CLI prints only transformer results.
+	- If `-t` is combined with analyzers/extractors, those run on the transformed text.
+- **Readers**: Automatically selects TXT, Markdown, or HTML readers based on file extension.
 
 ---
 
@@ -49,7 +66,7 @@ We use **Pydantic `BaseModel`** to strictly enforce schemas on:
 We maintain a zero-tolerance policy for code smells and type errors:
 - **Ruff**: 100% clean (E, F, B, SIM, I, etc.).
 - **Pyright**: 100% type-safe in `basic` mode.
-- **Pytest**: Over 80% coverage (69 tests) verifying edge cases and error handling.
+- **Pytest**: Over 80% coverage (114 tests) verifying edge cases and error handling.
 
 Run the suite:
 ```bash
@@ -66,7 +83,10 @@ src/text_toolkit/
 ├── analyzers/      # Core linguistic engines
 │   ├── core/       # Implementation (Sentiment, Readability, etc.)
 │   └── data/       # Linguistic JSON resources
+├── extractors/     # Regex-based data extractors (email, URL, date)
+│   ├── core/       # Extractor implementations
 ├── models/         # Pydantic & Dataclass models
-├── readers/        # IO logic (TXTReader)
+├── readers/        # IO logic (TXT, Markdown, HTML)
+├── transformers/   # Cleaner, Normalizer, Tokenizer
 └── cli.py          # Rich terminal interface
 ```

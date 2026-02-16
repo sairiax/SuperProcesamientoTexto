@@ -1,24 +1,44 @@
 import pytest
 
 from text_toolkit.extractors import ExtractorRunner
-from text_toolkit.models.text_document import ExtractionResult, TextDocument
+from text_toolkit.models.extraction_result import ExtractionResult
+from text_toolkit.models.text_document import TextDocument
 from text_toolkit.transformers import TransformerPipeline
 
 
-@pytest.fixture
-def extractor_runner():
-    """Fixture that provides an ExtractorRunner instance."""
-    return ExtractorRunner()
-
-
-def test_extractor_runner_initialization(extractor_runner):
+def test_extractor_runner_initialization(extractor_runner: ExtractorRunner):
     """Should verify that ExtractorRunner initializes with all core extractors."""
-    assert extractor_runner.email_extractor is not None
-    assert extractor_runner.url_extractor is not None
-    assert extractor_runner.date_extractor is not None
+    assert extractor_runner.extractors is not None
+    assert 'email' in extractor_runner.extractors
+    assert 'url' in extractor_runner.extractors
+    assert 'date' in extractor_runner.extractors
+    assert len(extractor_runner.extractors) == 3
 
 
-def test_extractor_runner_extract_all_method(extractor_runner, pipeline: TransformerPipeline):
+def test_extractor_runner_initialization_with_specific_extractors():
+    """Should initialize with only specified extractors."""
+    runner = ExtractorRunner(extractor_names=['EmailExtractor', 'URLExtractor'])
+
+    assert len(runner.extractors) == 2
+    assert 'email' in runner.extractors
+    assert 'url' in runner.extractors
+    assert 'date' not in runner.extractors
+
+
+def test_extractor_runner_initialization_single_extractor():
+    """Should initialize with a single extractor."""
+    runner = ExtractorRunner(extractor_names=['EmailExtractor'])
+
+    assert len(runner.extractors) == 1
+    assert 'email' in runner.extractors
+    assert 'url' not in runner.extractors
+    assert 'date' not in runner.extractors
+
+
+def test_extractor_runner_extract_all_method(
+    extractor_runner: ExtractorRunner,
+    pipeline: TransformerPipeline
+):
     """Should extract all types of data from a document."""
     document = TextDocument(
         content="Contact: admin@example.com, visit https://example.com on 2026-03-15",
@@ -41,7 +61,10 @@ def test_extractor_runner_extract_all_method(extractor_runner, pipeline: Transfo
     ids=["unique", "duplicates"],
 )
 def test_extractor_runner_unique_occurrences(
-    extractor_runner, pipeline: TransformerPipeline, unique_occurrences, expected_email_count
+    extractor_runner: ExtractorRunner,
+    pipeline: TransformerPipeline,
+    unique_occurrences: bool,
+    expected_email_count: int
 ):
     """Should respect unique_occurrences parameter."""
     document = TextDocument(
@@ -53,10 +76,38 @@ def test_extractor_runner_unique_occurrences(
     assert len(result.email_matches) == expected_email_count
 
 
-def test_extractor_runner_empty_document(extractor_runner, empty_doc):
+def test_extractor_runner_empty_document(extractor_runner:ExtractorRunner, empty_doc: TextDocument):
     """Should return empty result for empty document."""
     result = extractor_runner.extract_all(empty_doc)
 
     assert result.email_matches == []
     assert result.url_matches == []
     assert result.date_matches == []
+
+
+def test_extractor_runner_with_single_email_extractor(pipeline: TransformerPipeline):
+    """Should only extract emails when only EmailExtractor is enabled."""
+    runner = ExtractorRunner(extractor_names=['EmailExtractor'])
+    document = TextDocument(
+        content="Contact: admin@example.com, visit https://example.com on 2026-03-15",
+        pipeline=pipeline,
+    )
+    result = runner.extract_all(document)
+
+    assert "admin@example.com" in result.email_matches
+    assert len(result.url_matches) == 0  # URL not extracted
+    assert len(result.date_matches) == 0  # Date not extracted
+
+
+def test_extractor_runner_with_multiple_specific_extractors(pipeline: TransformerPipeline):
+    """Should extract only from specified extractor types."""
+    runner = ExtractorRunner(extractor_names=['EmailExtractor', 'DateExtractor'])
+    document = TextDocument(
+        content="Contact: admin@example.com, visit https://example.com on 2026-03-15",
+        pipeline=pipeline,
+    )
+    result = runner.extract_all(document)
+
+    assert "admin@example.com" in result.email_matches
+    assert "2026-03-15" in result.date_matches
+    assert len(result.url_matches) == 0  # URL not extracted

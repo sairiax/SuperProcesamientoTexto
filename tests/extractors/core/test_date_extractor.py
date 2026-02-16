@@ -1,13 +1,7 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
-from text_toolkit.extractors.core import DateExtractor
-
-
-@pytest.fixture
-def date_extractor():
-    """Fixture that provides a DateExtractor instance."""
-    return DateExtractor()
+from text_toolkit.transformers import Normalizer
 
 
 @pytest.mark.parametrize(
@@ -32,11 +26,20 @@ def date_extractor():
         "text_without_dates",
     ],
 )
-def test_date_extractor(date_extractor: Extractor, text: str, expected_dates: list[str]):
-    extracted_dates = date_extractor.extract(text)
+def test_date_extractor(
+    date_extractor: Extractor,
+    normalizer: Normalizer,
+    text: str,
+    expected_dates: list[str],
+):
+    normalized_text = normalizer.normalize_text(text)
+    normalized_expected = [normalizer.normalize_text(value) for value in expected_dates]
+    extracted_dates = date_extractor.extract(normalized_text)
 
     assert isinstance(extracted_dates, list), "Data structure should be a List"
-    assert len(extracted_dates) == len(expected_dates), (
+    assert len(extracted_dates) == len(normalized_expected), (
         "Size of extracted data doesnt match expected_dates size"
     )
-    assert extracted_dates == expected_dates, f"Dates extracted should be {expected_dates}"
+    assert (
+        extracted_dates == normalized_expected
+    ), f"Dates extracted should be {normalized_expected}"

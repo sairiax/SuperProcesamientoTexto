@@ -1,13 +1,6 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
-from text_toolkit.extractors.core import EmailExtractor
-
-
-@pytest.fixture
-def email_extractor():
-    """Fixture that provides an EmailExtractor instance."""
-    return EmailExtractor()
 
 
 @pytest.mark.parametrize(

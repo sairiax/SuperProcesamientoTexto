@@ -2,6 +2,7 @@
 
 from text_toolkit.analyzers.core import LanguageDetector
 from text_toolkit.models.text_document import TextDocument
+from text_toolkit.transformers import TransformerPipeline
 
 
 class TestLanguageDetector:
@@ -24,7 +25,7 @@ class TestLanguageDetector:
         assert result["language"] == "es"
         assert result["confidence"] > 0
 
-    def test_french_detection(self, pipeline):
+    def test_french_detection(self, pipeline: TransformerPipeline) -> None:
         """Test that French text is correctly identified."""
         doc = TextDocument(
             content="Bonjour! Je suis un étudiant. C'est la vie en France.",
@@ -38,7 +39,7 @@ class TestLanguageDetector:
         assert result["language"] in ["fr", "es", "it", "pt"]
         assert result["confidence"] > 0
 
-    def test_german_detection(self, pipeline):
+    def test_german_detection(self, pipeline: TransformerPipeline) -> None:
         """Test that German text is correctly identified."""
         doc = TextDocument(
             content="Guten Tag! Das ist ein deutscher Text mit vielen Wörtern.",
@@ -50,7 +51,7 @@ class TestLanguageDetector:
         assert result["language"] == "de"
         assert result["confidence"] > 0
 
-    def test_italian_detection(self, pipeline):
+    def test_italian_detection(self, pipeline: TransformerPipeline) -> None:
         """Test that Italian text is correctly identified."""
         doc = TextDocument(
             content="Ciao! Questo è un testo italiano con molte parole.",
@@ -62,7 +63,7 @@ class TestLanguageDetector:
         assert result["language"] in ["it", "es", "fr", "pt"]
         assert result["confidence"] > 0
 
-    def test_portuguese_detection(self, pipeline):
+    def test_portuguese_detection(self, pipeline: TransformerPipeline) -> None:
         """Test that Portuguese text is correctly identified."""
         doc = TextDocument(
             content="Olá! Este é um texto em português com muchas palabras.",
@@ -100,7 +101,7 @@ class TestLanguageDetector:
 
         assert 0.0 <= result["confidence"] <= 1.0
 
-    def test_single_word(self, pipeline):
+    def test_single_word(self, pipeline: TransformerPipeline) -> None:
         """Test language detection with a single word."""
         doc = TextDocument(content="the", pipeline=pipeline)
         analyzer = LanguageDetector()
@@ -110,7 +111,7 @@ class TestLanguageDetector:
         assert result["language"] == "en"
         assert result["confidence"] > 0
 
-    def test_no_stopwords(self, pipeline):
+    def test_no_stopwords(self, pipeline: TransformerPipeline) -> None:
         """Test text with no recognizable stopwords."""
         doc = TextDocument(content="xyzabc qwerty asdfgh", pipeline=pipeline)
         analyzer = LanguageDetector()
@@ -120,7 +121,7 @@ class TestLanguageDetector:
         assert result["language"] == "unknown"
         assert result["confidence"] == 0.0
 
-    def test_mixed_language_english_dominant(self, pipeline):
+    def test_mixed_language_english_dominant(self, pipeline: TransformerPipeline) -> None:
         """Test mixed language text with English being dominant."""
         doc = TextDocument(
             content="The quick brown fox jumps. Also, hola amigo y la casa.",

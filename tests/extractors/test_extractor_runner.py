@@ -111,3 +111,15 @@ def test_extractor_runner_with_multiple_specific_extractors(pipeline: Transforme
     assert "admin@example.com" in result.email_matches
     assert "2026-03-15" in result.date_matches
     assert len(result.url_matches) == 0  # URL not extracted
+
+
+def test_extractor_runner_repr_includes_active_extractors(
+    extractor_runner: ExtractorRunner,
+) -> None:
+    """__repr__ should summarize which extractor types are active."""
+    representation = repr(extractor_runner)
+
+    assert "ExtractorRunner(" in representation
+    assert "email" in representation
+    assert "url" in representation
+    assert "date" in representation

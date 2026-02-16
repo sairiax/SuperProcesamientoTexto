@@ -141,6 +141,15 @@ class TestReadabilityAnalyzer:
         assert result["avg_word_length"] > 0
         assert result["complexity"] in ["low", "medium", "high"]
 
+    def test_readability_analyzer_repr_includes_thresholds(self) -> None:
+        """__repr__ should summarize configured thresholds."""
+        analyzer = ReadabilityAnalyzer()
+
+        representation = repr(analyzer)
+
+        assert "ReadabilityAnalyzer(" in representation
+        assert "languages_available=" in representation
+
     def test_multiple_punctuation(self, pipeline: TransformerPipeline) -> None:
         """Test that multiple punctuation marks are handled correctly."""
         doc = TextDocument(content="Hello!!! Are you okay??? Yes!", pipeline=pipeline)

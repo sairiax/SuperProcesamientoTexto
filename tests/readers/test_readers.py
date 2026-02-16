@@ -89,5 +89,33 @@ def test_html_file_not_found(tmp_path: Path):
         reader = HtmlReader()
         list(reader.read(file_path))
 
+
+def test_html_reader_extracts_links_and_sources(tmp_path: Path):
+    """HtmlReader should include href and src attribute values in its output."""
+    file_path = tmp_path / "html_links.html"
+
+    lines = [
+        "<html>",
+        "  <head>",
+        "    <style>body { color: red; }</style>",
+        "  </head>",
+        "  <body>",
+        '    <script>console.log("hi")</script>',
+        '    <a href="https://example.com">Enlace principal</a>',
+        '    <img src="https://example.com/image.png" />',
+        "    <h1>Título HTML extendido</h1>",
+        "  </body>",
+        "</html>",
+    ]
+
+    file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    reader = HtmlReader()
+    extracted_lines = list(reader.read(file_path))
+
+    assert "https://example.com" in extracted_lines
+    assert "https://example.com/image.png" in extracted_lines
+    assert any("Título HTML" in line for line in extracted_lines)
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

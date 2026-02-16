@@ -1,6 +1,7 @@
 """Tests for AnalyzerRunner."""
 
 from text_toolkit.analyzers.analyzer_runner import AnalyzerRunner
+from text_toolkit.analyzers.core import FrequencyAnalyzer, LanguageDetector
 from text_toolkit.models.text_document import TextDocument
 
 
@@ -179,3 +180,28 @@ class TestAnalyzerRunner:
         assert LanguageDetector in analyzer_types
         assert SentimentAnalyzer in analyzer_types
         assert ReadabilityAnalyzer in analyzer_types
+
+    def test_analyzer_runner_with_specific_analyzers(self, english_doc: TextDocument):
+        """Test that AnalyzerRunner accepts a filtered analyzer list."""
+        runner = AnalyzerRunner(analyzer_names=["FrequencyAnalyzer", "LanguageDetector"])
+
+        analyzer_types = {type(a) for a in runner.analyzers}
+        assert analyzer_types == {FrequencyAnalyzer, LanguageDetector}
+
+        result = runner.analyze(english_doc)
+
+        assert "total_words" in result
+        assert "language" in result
+        # Sentiment and readability keys should not be present when not requested
+        assert "sentiment" not in result
+        assert "avg_sentence_length" not in result
+
+    def test_analyzer_runner_repr_includes_analyzer_names(self):
+        """Test that __repr__ exposes configured analyzers."""
+        runner = AnalyzerRunner(analyzer_names=["FrequencyAnalyzer", "SentimentAnalyzer"])
+
+        representation = repr(runner)
+
+        assert "AnalyzerRunner(" in representation
+        assert "FrequencyAnalyzer" in representation
+        assert "SentimentAnalyzer" in representation

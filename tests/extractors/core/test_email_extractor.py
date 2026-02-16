@@ -1,6 +1,7 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
+from text_toolkit.extractors.core import EmailExtractor
 
 
 @pytest.mark.parametrize(
@@ -47,3 +48,12 @@ def test_email_extractor(email_extractor: Extractor, text: str, expected_emails:
         "Size of extracted data doesnt match expected_emails size"
     )
     assert extracted_data == expected_emails, f"Emails extracted should be {expected_emails}"
+
+
+def test_email_extractor_repr_includes_pattern_information() -> None:
+    extractor = EmailExtractor()
+
+    representation = repr(extractor)
+
+    assert "EmailExtractor" in representation
+    assert "patterns_amount=" in representation

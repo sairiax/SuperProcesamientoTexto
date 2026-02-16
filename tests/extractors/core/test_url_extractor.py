@@ -1,6 +1,7 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
+from text_toolkit.extractors.core import URLExtractor
 
 
 @pytest.mark.parametrize(
@@ -31,3 +32,12 @@ def test_url_extractor(url_extractor: Extractor, text: str, expected_urls: list[
         "Size of extracted data doesnt match expected_urls size"
     )
     assert extracted_data == expected_urls, f"Urls extracted should be {expected_urls}"
+
+
+def test_url_extractor_repr_includes_pattern_information() -> None:
+    extractor = URLExtractor()
+
+    representation = repr(extractor)
+
+    assert "URLExtractor" in representation
+    assert "patterns_amount=" in representation

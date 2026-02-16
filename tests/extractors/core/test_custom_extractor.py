@@ -122,3 +122,16 @@ def test_add_patterns_dynamically():
     example_text = "Call 555-123-4567 or (555) 987-6543"
     extracted_data = phone_extractor.extract(example_text)
     assert len(extracted_data) == 2, "Should extract with both patterns"
+
+
+def test_custom_extractor_repr_includes_name_and_patterns() -> None:
+    extractor = CustomExtractor(
+        name="ip",
+        patterns=[r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"],
+    )
+
+    representation = repr(extractor)
+
+    assert "CustomExtractor" in representation
+    assert "patterns_amount=" in representation
+    assert "ip" in representation

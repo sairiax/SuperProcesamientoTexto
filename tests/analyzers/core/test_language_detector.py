@@ -132,3 +132,13 @@ class TestLanguageDetector:
 
         # More English stopwords, should detect as English
         assert result["language"] in ["en", "es"]
+
+    def test_language_detector_repr_includes_summary(self) -> None:
+        """__repr__ should expose languages and total stopwords."""
+        analyzer = LanguageDetector()
+
+        representation = repr(analyzer)
+
+        assert "LanguageDetector(" in representation
+        assert "languages=" in representation
+        assert "total_stopwords=" in representation

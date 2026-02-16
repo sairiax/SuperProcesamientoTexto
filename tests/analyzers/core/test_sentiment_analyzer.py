@@ -124,3 +124,13 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 3
         assert result["neg_count"] == 1
         assert result["score"] == 0.5  # Score: (3-1)/(3+1) = 0.5
+
+    def test_sentiment_analyzer_repr_includes_word_counts(self) -> None:
+        """__repr__ should summarize configured sentiment word lists."""
+        analyzer = SentimentAnalyzer()
+
+        representation = repr(analyzer)
+
+        assert "SentimentAnalyzer(" in representation
+        assert "pos_words_count=" in representation
+        assert "neg_words_count=" in representation

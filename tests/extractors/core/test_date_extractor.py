@@ -1,6 +1,7 @@
 import pytest
 
 from text_toolkit.extractors.base import Extractor
+from text_toolkit.extractors.core import DateExtractor
 from text_toolkit.transformers import Normalizer
 
 
@@ -43,3 +44,12 @@ def test_date_extractor(
     assert (
         extracted_dates == normalized_expected
     ), f"Dates extracted should be {normalized_expected}"
+
+
+def test_date_extractor_repr_includes_pattern_information() -> None:
+    extractor = DateExtractor()
+
+    representation = repr(extractor)
+
+    assert "DateExtractor" in representation
+    assert "patterns_amount=" in representation

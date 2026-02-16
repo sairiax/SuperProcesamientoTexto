@@ -39,7 +39,7 @@ class HtmlReader:
         path = Path(path)
 
         if not path.exists():
-            raise FileExistsError(f"{path} does not exist")
+            raise FileNotFoundError(f"{path} does not exist")
 
         raw_html = "\n".join(self._txt_reader.read(path))
 

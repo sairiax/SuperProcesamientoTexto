@@ -56,7 +56,7 @@ def test_mkd_file_not_found(tmp_path: Path):
     file_path = tmp_path / "nonexistent.md"
 
     with pytest.raises(FileNotFoundError):
-        reader = TxtReader()
+        reader = MarkdownReader()
         list(reader.read(file_path))
 
 def test_read_html_correctly(tmp_path: Path):
@@ -86,7 +86,7 @@ def test_html_file_not_found(tmp_path: Path):
     file_path = tmp_path / "nonexistent.html"
 
     with pytest.raises(FileNotFoundError):
-        reader = TxtReader()
+        reader = HtmlReader()
         list(reader.read(file_path))
 
 if __name__ == "__main__":

@@ -23,9 +23,9 @@ class CustomExtractor(RegexExtractor):
     >>> phone_extractor = CustomExtractor(
     ...     name="phone",
     ...     patterns=[
-    ...         r"\d{3}-\d{3}-\d{4}",           # 555-123-4567
-    ...         r"\(\d{3}\)\s*\d{3}-\d{4}"      # (555) 123-4567
-    ...     ]
+    ...         r"\\d{3}-\\d{3}-\\d{4}",  # 555-123-4567
+    ...         r"\\(\\d{3}\\)\\s*\\d{3}-\\d{4}",  # (555) 123-4567
+    ...     ],
     ... )
     >>> text = "Call 555-123-4567 or (555) 987-6543"
     >>> phone_extractor.extract(text)
@@ -33,8 +33,7 @@ class CustomExtractor(RegexExtractor):
 
     >>> # Extract IP addresses
     >>> ip_extractor = CustomExtractor(
-    ...     name="ip_address",
-    ...     patterns=[r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"]
+    ...     name="ip_address", patterns=[r"\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\b"]
     ... )
     >>> ip_extractor.extract("Server at 192.168.1.1")
     ['192.168.1.1']
@@ -65,9 +64,18 @@ class CustomExtractor(RegexExtractor):
         :return: List of matched strings
         :rtype: list[str]
         """
-        logger.debug("Starting extraction with CustomExtractor '%s' on text of length %d", self.name, len(text))
+        logger.debug(
+            "Starting extraction with CustomExtractor '%s' on text of length %d",
+            self.name,
+            len(text),
+        )
         results = self._extractor.extract(text, unique_occurrences=unique_occurrences)
-        logger.info("CustomExtractor '%s' found %d matches (unique_occurrences=%s)", self.name, len(results), unique_occurrences)
+        logger.info(
+            "CustomExtractor '%s' found %d matches (unique_occurrences=%s)",
+            self.name,
+            len(results),
+            unique_occurrences,
+        )
         return results
 
     def add_patterns(self, patterns: list[str]) -> None:
@@ -80,9 +88,27 @@ class CustomExtractor(RegexExtractor):
         """
         logger.info("Adding %d new patterns to CustomExtractor '%s'", len(patterns), self.name)
         self._extractor.add_patterns(patterns)
-        logger.debug("Total patterns in CustomExtractor '%s': %d", self.name, len(self._extractor._regex_pattern_list))
+        logger.debug(
+            "Total patterns in CustomExtractor '%s': %d",
+            self.name,
+            len(self._extractor._regex_pattern_list),
+        )
+
+    @property
+    def pattern_count(self) -> int:
+        """Return the number of registered regex patterns."""
+        return len(self._extractor._regex_pattern_list)
+
+    @property
+    def patterns(self) -> list[str]:
+        """Return the registered regex patterns as strings."""
+        return [item.pattern for item in self._extractor._regex_pattern_list]
 
     def __repr__(self) -> str:
         """Return string representation of the extractor."""
         pattern_list = [item.pattern for item in self._extractor._regex_pattern_list]
-        return f"CustomExtractor(name='{self.name}', patterns_amount={len(pattern_list)}, pattern_list={pattern_list})"
+        return (
+            f"CustomExtractor(name='{self.name}', "
+            f"patterns_amount={len(pattern_list)}, "
+            f"pattern_list={pattern_list})"
+        )

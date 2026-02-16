@@ -16,11 +16,12 @@ class URLExtractor(RegexExtractor):
     - URLs without protocol (e.g., www.example.com)
 
     """
+
     name: ClassVar[str] = "URLExtractor"
     _url_patterns: ClassVar[list[str]] = [
-        r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # HTTP/HTTPS URLs
-        r"ftp://(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # FTP URLs
-        r"www\.(?:[-\w.]|(?:%[\da-fA-F]{2}))+",  # www URLs without protocol
+        r"https?://(?:[-\w./?%&=+#]|(?:%[\da-fA-F]{2}))+",  # HTTP/HTTPS URLs
+        r"ftp://(?:[-\w./?%&=+#]|(?:%[\da-fA-F]{2}))+",  # FTP URLs
+        r"www\.(?:[-\w./?%&=+#]|(?:%[\da-fA-F]{2}))+",  # www URLs without protocol
     ]
 
     def __init__(self) -> None:

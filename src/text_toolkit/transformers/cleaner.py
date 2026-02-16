@@ -13,7 +13,8 @@ class Cleaner:
     def _email_url_protect(self, protected: list[str]):
         def protect(match: re.Match) -> str:
             protected.append(match.group(0))
-            return f"__PROT{len(protected)-1}__"
+            return f"__PROT{len(protected) - 1}__"
+
         return protect
 
     def clean_text(self, text: str) -> str:

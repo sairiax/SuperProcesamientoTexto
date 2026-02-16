@@ -2,49 +2,41 @@
 
 The `analyzers` package provides a modular and extensible framework for extracting linguistic insights from `TextDocument` objects.
 
-## Package Structure
-
-```text
-analyzers/
-├── base.py              # Abstract Base Class (Interface)
-├── analyzer_runner.py   # Orchestrator (Composite Runner)
-├── README.md            # Documentation
-└── core/                # Analyzer Implementations
-    ├── __init__.py      # Easy access to core components
-    ├── frequency_analyzer.py
-    ├── language_detector.py
-    ├── readability_analyzer.py
-    ├── sentiment_analyzer.py
-    └── data/            # Externalized linguistic resources
-        ├── _data_loader.py
-        └── *.json       # Dictionaries and thresholds
-```
-
 ## Architectural Design
 
-### 1. The Analyzer Interface (`base.py`)
-Every analyzer in the system must inherit from the `Analyzer` abstract base class. This ensures a consistent API:
+### 1. Transformer-Powered Tokenization
+Analyzers no longer handle tokenization, cleaning, or normalization internally. Instead, they rely on the `TextDocument.tokens` property, which delegates these tasks to a `TransformerPipeline`. This ensures:
+- **Consistency**: The same tokenization logic is used across all analyzers.
+- **Efficiency**: Tokenization is lazy-loaded and performed only once per document.
+- **Flexibility**: The processing pipeline can be customized (e.g., changing cleaners or normalizers) without modifying the analyzers.
+
+### 2. The Analyzer Interface (`base.py`)
+Every analyzer in the system follows the `Analyzer` protocol. This ensures a consistent API:
 ```python
 def analyze(self, document: TextDocument) -> dict[str, Any]:
     """Perform analysis and return a dictionary of results."""
 ```
 
-### 2. Core Implementations (`core/`)
+### 3. Core Implementations (`core/`)
 The `core` subpackage contains the specialized analysis logic:
 - **`FrequencyAnalyzer`**: Calculates total word count and identifies the most frequent terms.
-- **`LanguageDetector`**: Uses a stopword-overlap heuristic to identify the document's language (supporting 'es', 'en', 'fr', 'de', 'it', 'pt').
+- **`LanguageDetector`**: Uses a stopword-overlap heuristic to identify the document's language.
 - **`SentimentAnalyzer`**: Performs keyword-based sentiment analysis, providing a polarity score and counts.
-- **`ReadabilityAnalyzer`**: Computes text complexity metrics (average sentence/word length) and categorizes the reading level.
+- **`ReadabilityAnalyzer`**: Computes text complexity metrics and categorizes the reading level.
 
-### 3. Orchestration (`analyzer_runner.py`)
+### 4. Orchestration (`analyzer_runner.py`)
 The `AnalyzerRunner` implements the **Composite** pattern. It allows you to run all core analyzers in a single pass, consolidating their findings into a flat summary dictionary.
 
-## Why this structure?
+## Checklist Fulfillment
 
-- **Separation of Concerns**: Linguistic data is externalized in JSON files, isolated from the algorithmic logic in Python modules.
-- **Extensibility**: Adding a new analyzer is as simple as creating a new class that inherits from `Analyzer` and adding it to the `core` package or the `AnalyzerRunner`.
-- **Type Safety**: The entire package is fully annotated with Python type hints and compliant with `pyright`.
-- **Performance**: Analyzers leverage the lazy-loaded `tokens` property of the `TextDocument` to avoid redundant tokenization.
+This package adheres to the following principles from the project checklist:
+
+- **[x] Separation of Concerns (SRP)**: Logic is strictly divided. Analyzers handle extracted tokens, `TransformerPipeline` handles text transformation, and `TextDocument` maintains the state.
+- **[x] Composition over Inheritance**: `TextDocument` is composed with a `TransformerPipeline`, and `AnalyzerRunner` is composed of multiple individual analyzers.
+- **[x] Open/Closed Principle (OCP)**: The system is easily extensible. You can add new analyzers to the `core` package or the runner without modifying existing logic.
+- **[x] Dependency Inversion (DIP)**: High-level modules (like the CLI or Runner) depend on abstractions (the `Analyzer` protocol) rather than concrete implementations.
+- **[x] Lazy Loading**: Using the `@property` decorator in `TextDocument` for tokens optimizes resource usage.
+- **[x] Type Hinting & Quality**: Fully compliant with `pyright` and `ruff`, using advanced type hints like `Protocol` and `Generic`.
 
 ## Usage Examples
 
@@ -52,12 +44,15 @@ The `AnalyzerRunner` implements the **Composite** pattern. It allows you to run 
 ```python
 from text_toolkit.models.text_document import TextDocument
 from text_toolkit.analyzers import AnalyzerRunner
+from text_toolkit.transformers import Tokenizer, TransformerPipeline
 
-doc = TextDocument(content="I love this toolkit. It is amazing!")
+# Setup pipeline
+pipeline = TransformerPipeline(tokenizer=Tokenizer())
+doc = TextDocument(content="I love this toolkit. It is amazing!", pipeline=pipeline)
+
 runner = AnalyzerRunner()
-
 result = runner.analyze(doc)
-print(result["language"])   # "en"
+
 print(result["sentiment"])  # "positive"
 print(result["total_words"]) # 7
 ```
@@ -66,10 +61,12 @@ print(result["total_words"]) # 7
 ```python
 from text_toolkit.models.text_document import TextDocument
 from text_toolkit.analyzers.core import LanguageDetector
+from text_toolkit.transformers import Tokenizer, TransformerPipeline
 
-doc = TextDocument(content="Hola, ¿cómo estás?")
+pipeline = TransformerPipeline(tokenizer=Tokenizer())
+doc = TextDocument(content="Hola, ¿cómo estás?", pipeline=pipeline)
+
 detector = LanguageDetector()
-
 result = detector.analyze(doc)
 print(f"Detected: {result['language']} (Confidence: {result['confidence']})")
 ```

@@ -60,8 +60,4 @@ class LanguageDetector:
         """Return a concise representation for logging/debugging."""
         languages = sorted(self._stopwords.keys())
         total_words = sum(len(words) for words in self._stopwords.values())
-        return (
-            "LanguageDetector("
-            f"languages={languages}, "
-            f"total_stopwords={total_words})"
-        )
+        return f"LanguageDetector(languages={languages}, total_stopwords={total_words})"

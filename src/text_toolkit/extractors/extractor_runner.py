@@ -1,7 +1,8 @@
 import logging
 
 from text_toolkit.extractors.core import DateExtractor, EmailExtractor, URLExtractor
-from text_toolkit.models.text_document import ExtractionResult, TextDocument
+from text_toolkit.models.extraction_result import ExtractionResult
+from text_toolkit.models.text_document import TextDocument
 
 logger = logging.getLogger(__name__)
 
@@ -10,25 +11,32 @@ class ExtractorRunner:
     """
     Runner that coordinates multiple extractors to extract emails, URLs, and dates from text.
 
-    This class initializes and manages the three main extractors (EmailExtractor,
-    URLExtractor, DateExtractor) and provides a unified interface to extract all
-    types of data from a document.
+    This class initializes and manages extractors (EmailExtractor, URLExtractor, DateExtractor)
+    and provides a unified interface to extract data from a document. You can specify which
+    extractors to use or run all of them by default.
 
     Attributes
     ----------
-    email_extractor : EmailExtractor
-        Extractor for email addresses
-    url_extractor : URLExtractor
-        Extractor for URLs
-    date_extractor : DateExtractor
-        Extractor for dates in various formats
+    extractors : dict
+        Dictionary mapping extractor types ('email', 'url', 'date') to their instances
+
+    Parameters
+    ----------
+    extractor_names : list[str] | None, optional
+        List of extractor class names to use (e.g., ['EmailExtractor', 'URLExtractor']).
+        If None, all extractors are used.
 
     Example
     -------
     >>> from text_toolkit.extractors import ExtractorRunner
     >>> from text_toolkit.models.text_document import TextDocument
+    >>> # Use all extractors
     >>> runner = ExtractorRunner()
-    >>> doc = TextDocument(content="Contact: admin@example.com, visit https://example.com on 2026-03-15")
+    >>> # Use only specific extractors
+    >>> runner_emails = ExtractorRunner(extractor_names=['EmailExtractor', 'URLExtractor'])
+    >>> doc = TextDocument(
+    ...     content="Contact: admin@example.com, visit https://example.com on 2026-03-15"
+    ... )
     >>> result = runner.extract_all(doc)
     >>> result.email_matches
     ['admin@example.com']
@@ -38,19 +46,58 @@ class ExtractorRunner:
     ['2026-03-15']
     """
 
-    def __init__(self) -> None:
-        """Initialize the runner with all available extractors."""
-        logger.info("Initializing ExtractorRunner with all core extractors")
-        self.email_extractor = EmailExtractor()
-        self.url_extractor = URLExtractor()
-        self.date_extractor = DateExtractor()
+    def __init__(self, extractor_names: list[str] | None = None) -> None:
+        """
+        Initialize the runner with specified or all available extractors.
+
+        Parameters
+        ----------
+        extractor_names : list[str] | None, optional
+            List of extractor class names to initialize. Valid values:
+            'EmailExtractor', 'URLExtractor', 'DateExtractor'.
+            If None, all extractors are initialized.
+        """
+        # Map extractor class names to their classes and keys
+        name_to_class = {
+            'EmailExtractor': EmailExtractor,
+            'URLExtractor': URLExtractor,
+            'DateExtractor': DateExtractor,
+        }
+
+        name_to_key = {
+            'EmailExtractor': 'email',
+            'URLExtractor': 'url',
+            'DateExtractor': 'date',
+        }
+
+        self.extractors = {}
+
+        if extractor_names:
+            # only specified extractors - create only those requested
+            for name in extractor_names:
+                if name in name_to_key and name in name_to_class:
+                    key = name_to_key[name]
+                    self.extractors[key] = name_to_class[name]()
+                else:
+                    logger.warning("Unknown extractor name: %s", name)
+            logger.info("Initialized ExtractorRunner with specific extractors: %s", extractor_names)
+        else:
+            # all extractors - create all of them
+            for name, cls in name_to_class.items():
+                key = name_to_key[name]
+                self.extractors[key] = cls()
+            logger.info("Initialized ExtractorRunner with all core extractors")
+
+        logger.debug("Active extractors: %s", list(self.extractors.keys()))
         logger.info("ExtractorRunner initialized successfully")
 
     def extract_all(
         self, document: TextDocument, unique_occurrences: bool = True
     ) -> ExtractionResult:
         """
-        Extract emails, URLs, and dates from a document.
+        Extract emails, URLs, and dates from a document using configured extractors.
+
+        Only extracts data for the extractor types that were initialized.
 
         Parameters
         ----------
@@ -62,15 +109,18 @@ class ExtractorRunner:
         Returns
         -------
         ExtractionResult
-            Object containing all extracted emails, URLs, and dates
+            Object containing all extracted emails, URLs, and dates.
+            Fields will be empty lists if the corresponding extractor is not active.
 
         Example
         -------
         >>> doc = TextDocument(content="Email: test@example.com, URL: https://test.com")
-        >>> runner = ExtractorRunner()
+        >>> runner = ExtractorRunner(extractor_names=['EmailExtractor'])
         >>> result = runner.extract_all(doc, unique_occurrences=True)
         >>> len(result.email_matches)
         1
+        >>> len(result.url_matches)
+        0
         """
         if document.is_empty():
             logger.warning("Document is empty, returning empty extraction result")
@@ -78,9 +128,22 @@ class ExtractorRunner:
 
         logger.info("Starting extraction on document (content length: %d)", len(document.content))
 
-        email_matches = self.email_extractor.extract(document.content)
-        url_matches = self.url_extractor.extract(document.content)
-        date_matches = self.date_extractor.extract(document.content)
+        # Extract using only active extractors
+        email_matches = []
+        url_matches = []
+        date_matches = []
+
+        if 'email' in self.extractors:
+            email_matches = self.extractors['email'].extract(document.content)
+            logger.debug("Extracted %d emails", len(email_matches))
+
+        if 'url' in self.extractors:
+            url_matches = self.extractors['url'].extract(document.content)
+            logger.debug("Extracted %d URLs", len(url_matches))
+
+        if 'date' in self.extractors:
+            date_matches = self.extractors['date'].extract(document.content)
+            logger.debug("Extracted %d dates", len(date_matches))
 
         if unique_occurrences:
             email_matches = list(dict.fromkeys(email_matches))
@@ -92,13 +155,14 @@ class ExtractorRunner:
             "Extraction completed: %d emails, %d URLs, %d dates",
             len(email_matches),
             len(url_matches),
-            len(date_matches)
+            len(date_matches),
         )
 
         result = ExtractionResult(
             email_matches=email_matches,
             url_matches=url_matches,
             date_matches=date_matches,
+            active_extractors=list(self.extractors.keys()),
         )
 
         logger.debug("Extraction result: %r", result)
@@ -106,9 +170,5 @@ class ExtractorRunner:
 
     def __repr__(self) -> str:
         """Return string representation of the runner."""
-        return (
-            f"ExtractorRunner("
-            f"email_extractor={self.email_extractor}, "
-            f"url_extractor={self.url_extractor}, "
-            f"date_extractor={self.date_extractor})"
-        )
+        extractor_types = list(self.extractors.keys())
+        return f"ExtractorRunner(extractors={extractor_types}, count={len(extractor_types)})"

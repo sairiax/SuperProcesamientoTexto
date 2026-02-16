@@ -74,7 +74,11 @@ class RegexExtractor:
             logger.warning("Empty text provided for extraction")
             return []
 
-        logger.debug("Starting extraction on text of length %d with %d patterns", len(text), len(self._regex_pattern_list))
+        logger.debug(
+            "Starting extraction on text of length %d with %d patterns",
+            len(text),
+            len(self._regex_pattern_list),
+        )
         results = []
         for pattern in self._regex_pattern_list:
             matches = pattern.findall(text)
@@ -86,5 +90,9 @@ class RegexExtractor:
             results = list(dict.fromkeys(results))
             logger.debug("Removed duplicates, %d unique matches remain", len(results))
 
-        logger.info("Extraction completed: found %d matches (unique_occurrences=%s)", len(results), unique_occurrences)
+        logger.info(
+            "Extraction completed: found %d matches (unique_occurrences=%s)",
+            len(results),
+            unique_occurrences,
+        )
         return results

@@ -8,11 +8,7 @@ from text_toolkit.readers import HtmlReader, MarkdownReader, TxtReader
 def test_read_txt_correctly(tmp_path: Path):
     file_path = tmp_path / "txt_sample.txt"
 
-    lines = [
-        "Hola mundo",
-        "Este es un texto de prueba.",
-        "Línea final."
-    ]
+    lines = ["Hola mundo", "Este es un texto de prueba.", "Línea final."]
 
     file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -43,7 +39,7 @@ def test_read_mkd_correctly(tmp_path: Path):
         "- Lista 1",
         "- Lista 2",
         "",
-        "[Enlace](https://example.com)"
+        "[Enlace](https://example.com)",
     ]
 
     file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -72,7 +68,7 @@ def test_read_html_correctly(tmp_path: Path):
         "    <h1>Título HTML</h1>",
         "    <p>Hola <b>mundo</b> desde HTML.</p>",
         "  </body>",
-        "</html>"
+        "</html>",
     ]
 
     file_path.write_text("\n".join(lines) + "\n", encoding="utf-8")

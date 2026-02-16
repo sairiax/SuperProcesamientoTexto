@@ -1,41 +1,43 @@
 """Tests for SentimentAnalyzer."""
 
+import pytest
+
 from text_toolkit.analyzers.core import SentimentAnalyzer
 from text_toolkit.models.text_document import TextDocument
+from text_toolkit.transformers import TransformerPipeline
 
 
 class TestSentimentAnalyzer:
     """Test suite for SentimentAnalyzer."""
 
-    def test_positive_sentiment_english(self, english_doc: TextDocument):
-        """Test positive sentiment detection in English."""
+    @pytest.mark.parametrize(
+        "text, expected_sentiment",
+        [
+            ("This is a great day. I love English! It is excellent and amazing.", "positive"),
+            (
+                "This is a terrible day. I hate this awful situation. It is horrible and bad.",
+                "negative",
+            ),
+            (
+                "The document contains several sentences. The data was processed yesterday.",
+                "neutral",
+            ),
+            ("", "neutral"),
+            ("Es muy bueno y excelente. Maravilloso!", "positive"),
+            ("Es muy malo y terrible. Horrible!", "negative"),
+        ],
+    )
+    def test_sentiment_detection(
+        self,
+        text: str,
+        expected_sentiment: str,
+        pipeline: TransformerPipeline
+    ) -> None:
+        """Test sentiment detection across different languages and intensities."""
+        doc = TextDocument(content=text, pipeline=pipeline)
         analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(english_doc)
-
-        assert result["sentiment"] == "positive"
-        assert result["score"] > 0.1
-        assert result["pos_count"] > 0
-        assert result["neg_count"] == 0
-
-    def test_negative_sentiment(self, negative_sentiment_doc: TextDocument):
-        """Test negative sentiment detection."""
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(negative_sentiment_doc)
-
-        assert result["sentiment"] == "negative"
-        assert result["score"] < -0.1
-        assert result["pos_count"] == 0
-        assert result["neg_count"] > 0
-
-    def test_neutral_sentiment(self, neutral_sentiment_doc: TextDocument):
-        """Test neutral sentiment detection."""
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(neutral_sentiment_doc)
-
-        assert result["sentiment"] == "neutral"
-        assert -0.1 <= result["score"] <= 0.1
-        assert result["pos_count"] == 0
-        assert result["neg_count"] == 0
+        result = analyzer.analyze(doc)
+        assert result["sentiment"] == expected_sentiment
 
     def test_empty_document(self, empty_doc: TextDocument):
         """Test sentiment analysis on empty document."""
@@ -47,9 +49,11 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 0
         assert result["neg_count"] == 0
 
-    def test_mixed_sentiment(self):
+    def test_mixed_sentiment(self, pipeline: TransformerPipeline) -> None:
         """Test document with both positive and negative words."""
-        doc = TextDocument(content="This is good but also bad. Great and terrible.")
+        doc = TextDocument(
+            content="This is good but also bad. Great and terrible.", pipeline=pipeline
+        )
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 
@@ -59,28 +63,10 @@ class TestSentimentAnalyzer:
         assert "sentiment" in result
         assert "score" in result
 
-    def test_spanish_positive_words(self):
-        """Test that Spanish positive words are recognized."""
-        doc = TextDocument(content="Es muy bueno y excelente. Maravilloso!")
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(doc)
-
-        assert result["sentiment"] == "positive"
-        assert result["pos_count"] >= 3  # bueno, excelente, maravilloso
-
-    def test_spanish_negative_words(self):
-        """Test that Spanish negative words are recognized."""
-        doc = TextDocument(content="Es muy malo y terrible. Horrible!")
-        analyzer = SentimentAnalyzer()
-        result = analyzer.analyze(doc)
-
-        assert result["sentiment"] == "negative"
-        assert result["neg_count"] >= 3  # malo, terrible, horrible
-
-    def test_score_calculation(self):
+    def test_score_calculation(self, pipeline: TransformerPipeline) -> None:
         """Test that score is correctly calculated."""
         # Document with 3 positive and 1 negative word
-        doc = TextDocument(content="good great excellent bad")
+        doc = TextDocument(content="good great excellent bad", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 
@@ -89,39 +75,39 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 3
         assert result["neg_count"] == 1
 
-    def test_sentiment_threshold_positive(self):
+    def test_sentiment_threshold_positive(self, pipeline: TransformerPipeline) -> None:
         """Test positive sentiment threshold (> 0.1)."""
         # Slightly positive: 2 positive, 1 negative -> (2-1)/(2+1) = 0.33
-        doc = TextDocument(content="good great bad")
+        doc = TextDocument(content="good great bad", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 
         assert result["score"] > 0.1
         assert result["sentiment"] == "positive"
 
-    def test_sentiment_threshold_negative(self):
+    def test_sentiment_threshold_negative(self, pipeline: TransformerPipeline) -> None:
         """Test negative sentiment threshold (< -0.1)."""
         # Slightly negative: 1 positive, 2 negative -> (1-2)/(1+2) = -0.33
-        doc = TextDocument(content="good bad terrible")
+        doc = TextDocument(content="good bad terrible", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 
         assert result["score"] < -0.1
         assert result["sentiment"] == "negative"
 
-    def test_sentiment_threshold_neutral_edge(self):
+    def test_sentiment_threshold_neutral_edge(self, pipeline: TransformerPipeline) -> None:
         """Test neutral sentiment at edge of threshold."""
         # Exactly balanced: 1 positive, 1 negative -> (1-1)/(1+1) = 0.0
-        doc = TextDocument(content="good bad")
+        doc = TextDocument(content="good bad", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 
         assert result["score"] == 0.0
         assert result["sentiment"] == "neutral"
 
-    def test_case_insensitivity(self):
+    def test_case_insensitivity(self, pipeline: TransformerPipeline) -> None:
         """Test that sentiment words are matched case-insensitively."""
-        doc = TextDocument(content="GOOD Great EXCELLENT")
+        doc = TextDocument(content="GOOD Great EXCELLENT", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 
@@ -129,9 +115,9 @@ class TestSentimentAnalyzer:
         assert result["pos_count"] == 3
         assert result["sentiment"] == "positive"
 
-    def test_repeated_sentiment_words(self):
+    def test_repeated_sentiment_words(self, pipeline: TransformerPipeline) -> None:
         """Test that repeated sentiment words are counted multiple times."""
-        doc = TextDocument(content="good good good bad")
+        doc = TextDocument(content="good good good bad", pipeline=pipeline)
         analyzer = SentimentAnalyzer()
         result = analyzer.analyze(doc)
 

@@ -1,9 +1,6 @@
 import pytest
 
-from text_toolkit.transformers.cleaner import Cleaner
-from text_toolkit.transformers.normalizer import Normalizer
-from text_toolkit.transformers.pipeline import TransformerPipeline
-from text_toolkit.transformers.tokenizer import Tokenizer
+from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer, TransformerPipeline
 
 
 def test_normalizer_basic():

@@ -5,9 +5,7 @@ from typing import Any
 
 from text_toolkit.analyzers import AnalyzerRunner
 from text_toolkit.extractors import ExtractorRunner
-from text_toolkit.models import ExtractionResult
-from text_toolkit.models.config_models import CLIConfig
-from text_toolkit.models.text_document import TextDocument
+from text_toolkit.models import CLIConfig, ExtractionResult, TextDocument
 from text_toolkit.readers import HtmlReader, MarkdownReader, TxtReader
 from text_toolkit.transformers import Cleaner, Normalizer, Tokenizer, TransformerPipeline
 
